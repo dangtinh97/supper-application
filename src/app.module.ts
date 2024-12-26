@@ -4,7 +4,8 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ExternalHealthModule } from './modules/external-health/external-health.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AppConfig } from "./app.config";
+import { AppConfig } from './app.config';
+import { tsMongoPlugin } from './plugins/ts-mongo.plugin';
 
 @Module({
   imports: [
@@ -14,11 +15,15 @@ import { AppConfig } from "./app.config";
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory:(configService: ConfigService) => {
+      useFactory: (configService: ConfigService) => {
         return {
           uri: configService.get<AppConfig['MONGODB_URI']>('MONGODB_URI'),
           autoCreate: true,
           autoIndex: true,
+          connectionFactory: (connection: any) => {
+            connection.plugin(tsMongoPlugin);
+            return connection;
+          },
         };
       },
       inject: [ConfigService],
