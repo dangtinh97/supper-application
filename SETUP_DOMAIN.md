@@ -1,3 +1,6 @@
+
+[hướng dẫn cấu hình domain cho web](https://chatgpt.com/share/676e51d4-5ca4-800a-953b-f209f0370af9)
+
 Để cấu hình domain tool.myoupip.com chạy HTTPS với server AWS đang chạy HTTP trên port 3000, bạn có thể làm theo các bước sau:
 
 1. Cấu hình DNS
