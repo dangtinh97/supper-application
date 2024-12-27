@@ -6,7 +6,7 @@ RUN corepack enable
 FROM base AS dependencies
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+RUN pnpm install
 
 FROM base AS builder
 WORKDIR /app
