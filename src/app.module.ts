@@ -6,6 +6,7 @@ import { ExternalHealthModule } from './modules/external-health/external-health.
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppConfig } from './app.config';
 import { tsMongoPlugin } from './plugins/ts-mongo.plugin';
+import { TelegramModule } from "./modules/telegram/telegram.module";
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { tsMongoPlugin } from './plugins/ts-mongo.plugin';
       inject: [ConfigService],
     }),
     ExternalHealthModule,
+    TelegramModule,
   ],
   controllers: [AppController],
   providers: [AppService],
