@@ -12,7 +12,7 @@ FROM base AS builder
 WORKDIR /app
 COPY . .
 COPY --from=dependencies /app/node_modules ./node_modules
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm install
 RUN pnpm run build
 
 FROM base AS runner
