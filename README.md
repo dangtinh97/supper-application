@@ -1,6 +1,6 @@
 # SUPPER APPLICATION
 ## Document
-- [CORE TELEGRAM](https://msp-zoom.cabiz.ai/?session-id=b2f21408-77d1-4023-ab23-b7e964d9e010)
+- [CORE TELEGRAM](https://core.telegram.org/bots/api#available-types)
 ***
 ## Installation
 

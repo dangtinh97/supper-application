@@ -1,0 +1,16 @@
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { SchemaTypes } from 'mongoose';
+
+@Schema({ collection: 'log_telegram' })
+export class LogTelegram {
+  @Prop()
+  level: string;
+
+  @Prop()
+  message: string;
+
+  @Prop({ type: SchemaTypes.Mixed })
+  meta: any;
+}
+
+export const LogTelegramSchema = SchemaFactory.createForClass(LogTelegram);
