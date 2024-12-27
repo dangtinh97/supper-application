@@ -7,6 +7,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppConfig } from './app.config';
 import { tsMongoPlugin } from './plugins/ts-mongo.plugin';
 import { TelegramModule } from "./modules/telegram/telegram.module";
+import { TaskService } from "./task.service";
+import { ScheduleModule } from "@nestjs/schedule";
 
 @Module({
   imports: [
@@ -14,6 +16,7 @@ import { TelegramModule } from "./modules/telegram/telegram.module";
       isGlobal: true,
       envFilePath: ['.env'],
     }),
+    ScheduleModule.forRoot(),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
@@ -33,6 +36,6 @@ import { TelegramModule } from "./modules/telegram/telegram.module";
     TelegramModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, TaskService],
 })
 export class AppModule {}

@@ -6,8 +6,8 @@ import {
   ExternalHealthConfig,
   ExternalHealthConfigSchema,
 } from './schemas/external-health-config.schema';
-import { TelegramModule } from "../telegram/telegram.module";
-import { SettingModule } from "../../share_modules/setting/setting.module";
+import { TelegramModule } from '../telegram/telegram.module';
+import { SettingModule } from '../../share_modules/setting/setting.module';
 
 @Module({
   imports: [
@@ -22,6 +22,6 @@ import { SettingModule } from "../../share_modules/setting/setting.module";
   ],
   providers: [ExternalHealthService],
   controllers: [ExternalHealthController],
-  exports: [],
+  exports: [ExternalHealthService],
 })
 export class ExternalHealthModule {}
