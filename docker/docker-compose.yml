@@ -1,0 +1,14 @@
+version: '3'
+services:
+  node_app:
+    build:
+      context: ../
+      dockerfile: ./docker/Dockerfile
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    networks:
+      - sp_application
+networks:
+  sp_application:
+    driver: bridge
