@@ -9,6 +9,7 @@ import { tsMongoPlugin } from './plugins/ts-mongo.plugin';
 import { TelegramModule } from "./modules/telegram/telegram.module";
 import { TaskService } from "./task.service";
 import { ScheduleModule } from "@nestjs/schedule";
+import { YoutubeModule } from "./modules/youtube/youtube.module";
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ScheduleModule } from "@nestjs/schedule";
     }),
     ExternalHealthModule,
     TelegramModule,
+    YoutubeModule,
   ],
   controllers: [AppController],
   providers: [AppService, TaskService],
