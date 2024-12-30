@@ -5,7 +5,7 @@ RUN corepack enable
 
 FROM base AS dependencies
 WORKDIR /app
-RUN apk add --no-cache python3 py3-pip
+RUN apk add --no-cache python3 py3-pip && ln -sf /usr/bin/python3 /usr/bin/python
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install
 
