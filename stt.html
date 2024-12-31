@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<div>
+  <div>
+    <div id="transcript"></div>
+  </div>
+  <button type="button" id="start">Start</button>
+  <button type="button">Stop</button>
+</div>
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script>
+  document.addEventListener("DOMContentLoaded",()=>{
+    $('#start').on('click',()=>{
+      startStream()
+      transcript()
+    })
+
+
+    const transcript = ()=>{
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'vi-VN'; // Set language
+      recognition.interimResults = true; // Enable partial results
+
+      recognition.onresult = event => {
+        for (const result of event.results) {
+          $('#transcript').text(result[0].transcript)
+          // console.log("Transcript:", result[0].transcript);
+        }
+      };
+
+      recognition.onerror = event => {
+        console.error("SpeechRecognition error:", event.error);
+      };
+
+      recognition.onend = () => {
+        console.log("SpeechRecognition ended.");
+        recognition.start();
+      };
+
+      recognition.start();
+    };
+
+    const startStream = ()=>{
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          const mediaStreamSource = audioContext.createMediaStreamSource(stream);
+
+          console.log("Audio input captured:", mediaStreamSource);
+
+          // Pass the audio stream for further processing (e.g., send it to a server or SpeechRecognition API)
+        })
+        .catch(error => {
+          console.error("Error accessing microphone:", error);
+        });
+    }
+  })
+</script>
+</body>
+</html>
