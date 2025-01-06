@@ -10,7 +10,7 @@ export class LogTelegram {
   message: string;
 
   @Prop({ type: SchemaTypes.Mixed })
-  meta: any;
+  data: any;
 }
 
 export const LogTelegramSchema = SchemaFactory.createForClass(LogTelegram);
