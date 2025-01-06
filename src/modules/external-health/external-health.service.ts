@@ -40,6 +40,7 @@ export class ExternalHealthService {
               {
                 chat_id: chatId,
                 text: `Health check failed for:\n${config.url}`,
+                parse_mode: 'text',
               },
               SETTING_KEY.BOT_TOKEN_SUPPER_APPLICATION,
             );
