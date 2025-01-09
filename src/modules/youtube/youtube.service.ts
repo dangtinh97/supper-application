@@ -1,10 +1,17 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Youtube } from './schemas/youtube.schema';
+import { Model } from 'mongoose';
 
 const youtubedl = require('youtube-dl-exec');
+const _ = require('lodash');
 
 @Injectable()
 export class YoutubeService {
-  constructor() {}
+  constructor(
+    @InjectModel(Youtube.name)
+    private readonly youtubeModel: Model<Youtube>,
+  ) {}
 
   async getVideo(videoId: string) {
     return new Promise((resolve, reject) => {
@@ -136,6 +143,63 @@ export class YoutubeService {
       },
     );
     const json = await curl.json();
-    return json;
+    const data = _.get(
+      json,
+      'contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents.0.itemSectionRenderer.contents',
+      [],
+    );
+    let dataInsert = _.map(data, (item) => {
+      const timeText = _.get(item, 'videoRenderer.lengthText.simpleText', '');
+      return {
+        video_id: _.get(item, 'videoRenderer.videoId'),
+        thumbnails: _.get(item, 'videoRenderer.thumbnail.thumbnails', []),
+        title: _.get(item, 'videoRenderer.title.runs[0].text', ''),
+        duration: this.convertToSeconds(timeText),
+        view_of_ytb: parseInt(
+          _.get(item, 'videoRenderer.viewCountText.simpleText', '').replaceAll(
+            ',',
+            '',
+          ),
+        ),
+        channel: {
+          name: _.get(item, 'videoRenderer.ownerText.runs[0].text', ''),
+          channel_id: _.get(
+            item,
+            'videoRenderer.ownerText.runs[0].navigationEndpoint.browseEndpoint.browseId',
+            '',
+          ),
+        },
+      };
+    });
+    dataInsert = _.filter(dataInsert, (item: { title: any }) => item.title);
+    for (const item of dataInsert) {
+      await this.youtubeModel.findOneAndUpdate(
+        {
+          video_id: item.video_id,
+        },
+        { ...item },
+        { upsert: true },
+      );
+    }
+    return dataInsert.map((item) => {
+      return {
+        ...item,
+        thumbnail: _.get(item, 'thumbnails.0.url', ''),
+      }
+    });
+  }
+
+  convertToSeconds(time: string) {
+    const parts = time.split(':').map(Number);
+
+    // If the time includes hours
+    if (parts.length === 3) {
+      const [hours, minutes, seconds] = parts;
+      return hours * 3600 + minutes * 60 + seconds;
+    }
+
+    // If the time does not include hours
+    const [minutes, seconds] = parts;
+    return minutes * 60 + seconds;
   }
 }
