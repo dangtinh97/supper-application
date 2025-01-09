@@ -185,7 +185,7 @@ export class YoutubeService {
       return {
         ...item,
         thumbnail: _.get(item, 'thumbnails.0.url', ''),
-      }
+      };
     });
   }
 

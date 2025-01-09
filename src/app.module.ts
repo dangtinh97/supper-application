@@ -10,6 +10,7 @@ import { TelegramModule } from "./modules/telegram/telegram.module";
 import { TaskService } from "./task.service";
 import { ScheduleModule } from "@nestjs/schedule";
 import { YoutubeModule } from "./modules/youtube/youtube.module";
+import { AuthModule } from "./modules/auth/auth.module";
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { YoutubeModule } from "./modules/youtube/youtube.module";
     ExternalHealthModule,
     TelegramModule,
     YoutubeModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService, TaskService],
