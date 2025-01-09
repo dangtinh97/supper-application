@@ -23,7 +23,7 @@ export class ResponseInterceptor implements NestInterceptor{
       map((data) => ({
         status: 200,
         message: message,
-        data: data ? (isArray(data) ? {list: data} : data) : {},
+        data: data ? (isArray(data) ? { list: data } : data) : {},
       })),
       catchError((err) => {
         const statusCode = err instanceof HttpException ? err.getStatus() : 500;
