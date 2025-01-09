@@ -13,7 +13,11 @@ export class YoutubeService {
         noCheckCertificates: true,
         noWarnings: true,
         preferFreeFormats: true,
-        addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
+        addHeader: [
+          'referer:youtube.com',
+          'user-agent:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.3',
+          'cookie:GPS=1; YSC=78jX5rIbZuM; __Secure-ROLLOUT_TOKEN=CPmjo43ox_e_iwEQ4LuA-MbnigMY4LuA-MbnigM%3D; VISITOR_INFO1_LIVE=V2vW6i-sY7k; VISITOR_PRIVACY_METADATA=CgJWThIEGgAgIg%3D%3D; PREF=f6=40000000&tz=Asia.Saigon',
+        ],
       })
         .then((output) => {
           const selected = (({
@@ -70,7 +74,7 @@ export class YoutubeService {
       .replace(/\)$/, '');
     const data = JSON.parse(jsonString);
     const suggestions = data[1]; // Danh sách các gợi ý
-    const results:any = [];
+    const results: any = [];
     suggestions.forEach((suggestion: any) => {
       results.push(suggestion[0]);
     });
