@@ -15,7 +15,11 @@ export class BadRequestCustomExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus
       ? exception.getStatus()
       : HttpStatus.INTERNAL_SERVER_ERROR;
-    response.status(status === 401 ? 401 : 200).json({
+    
+    const isCheck = [401, 426].indexOf(status) > -1;
+    
+    
+    response.status(isCheck ? status : 200).json({
       status: status,
       data: {},
       message: exception.message,
