@@ -1,6 +1,6 @@
-import { Controller, Post, Req, UseGuards } from "@nestjs/common";
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { HeaderGuard } from "../../guards/header.guard";
+import { HeaderGuard } from '../../guards/header.guard';
 
 @Controller('/auth')
 @UseGuards(HeaderGuard)
@@ -9,6 +9,7 @@ export class DrumtifyAuthController {
 
   @Post('/login')
   async login(@Req() req: Request) {
-    console.log(req.headers);
+    const uidDevice = req.headers['uid-device'];
+    return await this.service.login(uidDevice, '');
   }
 }
