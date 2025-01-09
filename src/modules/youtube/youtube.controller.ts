@@ -15,9 +15,7 @@ export class YoutubeController {
   }
 
   @Get('/suggest')
-  async suggest(
-    @Query("q") q: string
-  ){
+  async suggest(@Query('q') q: string) {
     return await this.service.suggest(q);
   }
 }

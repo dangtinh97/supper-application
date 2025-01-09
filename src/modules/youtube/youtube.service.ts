@@ -16,7 +16,7 @@ export class YoutubeService {
         addHeader: [
           'referer:youtube.com',
           'user-agent:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.3',
-          'cookie:GPS=1; YSC=78jX5rIbZuM; __Secure-ROLLOUT_TOKEN=CPmjo43ox_e_iwEQ4LuA-MbnigMY4LuA-MbnigM%3D; VISITOR_INFO1_LIVE=V2vW6i-sY7k; VISITOR_PRIVACY_METADATA=CgJWThIEGgAgIg%3D%3D; PREF=f6=40000000&tz=Asia.Saigon',
+          'cookie:GPS=1; YSC=mMyd1AuO_rE; VISITOR_INFO1_LIVE=JWPwxVW7pIs; VISITOR_PRIVACY_METADATA=CgJWThIEGgAgVw%3D%3D; PREF=f6=40000000&tz=Asia.Saigon&f7=100; CONSISTENCY=AKreu9v7sGNQYrmytaWddhKPXkQXlTWS6fS7nY_rO5dT-L0wagY96E42KTB-cWOB_w7mdzklEdJXfawhUkkgmURaIpuTp7kTs7pkOIu4zC0YcsSYgAiMPZpgoFGgYJ7ktbFN5Ca7uqGu--8kK_8W8bE',
         ],
       })
         .then((output) => {
