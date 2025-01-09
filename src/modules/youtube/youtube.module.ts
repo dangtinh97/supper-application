@@ -10,8 +10,8 @@ import { Youtube, YoutubeSchema } from "./schemas/youtube.schema";
       {
         name: Youtube.name,
         schema: YoutubeSchema,
-      }
-    ])
+      },
+    ]),
   ],
   controllers: [YoutubeController],
   providers: [YoutubeService],

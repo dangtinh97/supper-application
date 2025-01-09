@@ -11,6 +11,9 @@ import { TaskService } from "./task.service";
 import { ScheduleModule } from "@nestjs/schedule";
 import { YoutubeModule } from "./modules/youtube/youtube.module";
 import { AuthModule } from "./modules/auth/auth.module";
+import { JwtModule, JwtService } from "@nestjs/jwt";
+import { JwtAuthGuard } from "./guards/auth.guard";
+import { JwtStrategy } from "./jwt-strategy/jwt-strategy.service";
 
 @Module({
   imports: [
@@ -34,12 +37,29 @@ import { AuthModule } from "./modules/auth/auth.module";
       },
       inject: [ConfigService],
     }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => {
+        return {
+          global: true,
+          secret: configService.get<string>('JWT_SECRET')!,
+          signOptions: { expiresIn: '1y' },
+        };
+      },
+      inject: [ConfigService],
+    }),
     ExternalHealthModule,
     TelegramModule,
     YoutubeModule,
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService, TaskService],
+  providers: [
+    AppService,
+    TaskService,
+    JwtService,
+    ConfigService,
+    JwtStrategy,
+  ],
 })
 export class AppModule {}
