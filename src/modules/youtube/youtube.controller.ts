@@ -18,4 +18,11 @@ export class YoutubeController {
   async suggest(@Query('q') q: string) {
     return await this.service.suggest(q);
   }
+  
+  @Get('/find-video')
+  async findVideo(
+    @Query('q') q: string
+  ){
+    return await this.service.findVideoByKeyWord(q);
+  }
 }
