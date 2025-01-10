@@ -14,6 +14,7 @@ import { AuthModule } from "./modules/auth/auth.module";
 import { JwtModule, JwtService } from "@nestjs/jwt";
 import { JwtAuthGuard } from "./guards/auth.guard";
 import { JwtStrategy } from "./jwt-strategy/jwt-strategy.service";
+import { ProfileModule } from "./modules/profile/profile.module";
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { JwtStrategy } from "./jwt-strategy/jwt-strategy.service";
     TelegramModule,
     YoutubeModule,
     AuthModule,
+    ProfileModule,
   ],
   controllers: [AppController],
   providers: [

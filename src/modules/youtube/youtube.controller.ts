@@ -18,9 +18,7 @@ export class YoutubeController {
   }
 
   @Get('/find-video')
-  async findVideo(
-    @Query('q') q: string,
-    @User() {user_oid}: any) {
+  async findVideo(@Query('q') q: string, @User() { user_oid }: any) {
     console.log(user_oid);
     return await this.service.findVideoByKeyWord(q);
   }
