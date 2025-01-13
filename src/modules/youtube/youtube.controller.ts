@@ -1,7 +1,8 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { YoutubeService } from './youtube.service';
 import { JwtAuthGuard } from '../../guards/auth.guard';
-import { User } from "../../decorators/user.decorator";
+import { User } from '../../decorators/user.decorator';
+
 @Controller('youtube')
 @UseGuards(JwtAuthGuard)
 export class YoutubeController {
@@ -21,5 +22,10 @@ export class YoutubeController {
   async findVideo(@Query('q') q: string, @User() { user_oid }: any) {
     console.log(user_oid);
     return await this.service.findVideoByKeyWord(q);
+  }
+
+  @Post('/view')
+  async viewVideo(@Body() body: any, @User() { user_oid }: any) {
+    return await this.service.viewVideo(body.video_id, user_oid);
   }
 }

@@ -202,4 +202,21 @@ export class YoutubeService {
     const [minutes, seconds] = parts;
     return minutes * 60 + seconds;
   }
+
+  async viewVideo(videoId: string, userOid: string) {
+    await Promise.all([
+      await this.youtubeModel.findOneAndUpdate(
+        {
+          video_id: videoId,
+        },
+        {
+          $inc: {
+            view_of_app: 1,
+          },
+        },
+      ),
+    ]);
+
+    return {};
+  }
 }
