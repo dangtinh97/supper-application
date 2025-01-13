@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { YoutubeController } from './youtube.controller';
 import { YoutubeService } from './youtube.service';
-import { MongooseModule } from "@nestjs/mongoose";
-import { Youtube, YoutubeSchema } from "./schemas/youtube.schema";
+import { MongooseModule } from '@nestjs/mongoose';
+import { Youtube, YoutubeSchema } from './schemas/youtube.schema';
+import { RecentlyVideo, RecentlyVideoSchema } from './schemas/recently_video';
 
 @Module({
   imports: [
@@ -10,6 +11,10 @@ import { Youtube, YoutubeSchema } from "./schemas/youtube.schema";
       {
         name: Youtube.name,
         schema: YoutubeSchema,
+      },
+      {
+        name: RecentlyVideo.name,
+        schema: RecentlyVideoSchema,
       },
     ]),
   ],

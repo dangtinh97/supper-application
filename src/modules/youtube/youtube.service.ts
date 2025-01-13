@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Youtube } from './schemas/youtube.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
+import { RecentlyVideo } from './schemas/recently_video';
+import { ObjectId } from 'mongodb';
 
 const youtubedl = require('youtube-dl-exec');
 const _ = require('lodash');
@@ -11,6 +13,8 @@ export class YoutubeService {
   constructor(
     @InjectModel(Youtube.name)
     private readonly youtubeModel: Model<Youtube>,
+    @InjectModel(RecentlyVideo.name)
+    private readonly recentlyVideoModel: Model<RecentlyVideo>,
   ) {}
 
   async getVideo(videoId: string) {
@@ -213,6 +217,25 @@ export class YoutubeService {
           $inc: {
             view_of_app: 1,
           },
+        },
+      ),
+      this.recentlyVideoModel.findOneAndUpdate(
+        {
+          video_id: videoId,
+          user_oid: new ObjectId(userOid),
+        },
+        {
+          $set: {
+            video_id: videoId,
+            user_oid: new ObjectId(userOid),
+            updated_at: new Date(),
+          },
+          $inc: {
+            count: 1,
+          },
+        },
+        {
+          upsert: true,
         },
       ),
     ]);
