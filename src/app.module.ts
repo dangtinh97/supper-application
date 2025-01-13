@@ -6,15 +6,15 @@ import { ExternalHealthModule } from './modules/external-health/external-health.
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppConfig } from './app.config';
 import { tsMongoPlugin } from './plugins/ts-mongo.plugin';
-import { TelegramModule } from "./modules/telegram/telegram.module";
-import { TaskService } from "./task.service";
-import { ScheduleModule } from "@nestjs/schedule";
-import { YoutubeModule } from "./modules/youtube/youtube.module";
-import { AuthModule } from "./modules/auth/auth.module";
-import { JwtModule, JwtService } from "@nestjs/jwt";
-import { JwtAuthGuard } from "./guards/auth.guard";
-import { JwtStrategy } from "./jwt-strategy/jwt-strategy.service";
-import { ProfileModule } from "./modules/profile/profile.module";
+import { TelegramModule } from './modules/telegram/telegram.module';
+import { TaskService } from './task.service';
+import { ScheduleModule } from '@nestjs/schedule';
+import { YoutubeModule } from './modules/youtube/youtube.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtStrategy } from './jwt-strategy/jwt-strategy.service';
+import { ProfileModule } from './modules/profile/profile.module';
+import { NotificationModule } from './modules/notification/notification.module';
 
 @Module({
   imports: [
@@ -54,14 +54,9 @@ import { ProfileModule } from "./modules/profile/profile.module";
     YoutubeModule,
     AuthModule,
     ProfileModule,
+    NotificationModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    TaskService,
-    JwtService,
-    ConfigService,
-    JwtStrategy,
-  ],
+  providers: [AppService, TaskService, JwtService, ConfigService, JwtStrategy],
 })
 export class AppModule {}
