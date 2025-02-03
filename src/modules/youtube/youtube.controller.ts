@@ -28,4 +28,9 @@ export class YoutubeController {
   async viewVideo(@Body() body: any, @User() { user_oid }: any) {
     return await this.service.viewVideo(body.video_id, user_oid);
   }
+
+  @Get('/recently-video')
+  async recentlyVideo(@User() { user_oid }: any) {
+    return await this.service.recentlyVideo(user_oid);
+  }
 }

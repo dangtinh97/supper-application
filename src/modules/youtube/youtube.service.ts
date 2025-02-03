@@ -4,6 +4,7 @@ import { Youtube } from './schemas/youtube.schema';
 import { Model, Types } from 'mongoose';
 import { RecentlyVideo } from './schemas/recently_video';
 import { ObjectId } from 'mongodb';
+
 const _ = require('lodash');
 
 @Injectable()
@@ -205,5 +206,15 @@ export class YoutubeService {
     ]);
 
     return {};
+  }
+
+  async recentlyVideo(userOid: string) {
+    return await this.recentlyVideoModel
+      .find({
+        user_oid: new ObjectId(userOid),
+      })
+      .sort({ updated_at: -1 })
+      .limit(20)
+      .exec();
   }
 }
