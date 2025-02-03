@@ -209,12 +209,34 @@ export class YoutubeService {
   }
 
   async recentlyVideo(userOid: string) {
-    return await this.recentlyVideoModel
-      .find({
-        user_oid: new ObjectId(userOid),
-      })
-      .sort({ updated_at: -1 })
-      .limit(20)
+    const finds = await this.recentlyVideoModel
+      .aggregate([
+        {
+          $match: {
+            user_oid: new ObjectId(userOid),
+          },
+        },
+        {
+          $limit: 20,
+        },
+        {
+          $lookup: {
+            from: 'ytb_video',
+            localField: 'video_id',
+            foreignField: 'video_id',
+            as: 'video',
+          },
+        },
+        {
+          $sort: {
+            updated_at: -1,
+          },
+        },
+      ])
       .exec();
+
+    return finds.map((item) => {
+      return item.video[0];
+    });
   }
 }
