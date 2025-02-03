@@ -4,8 +4,6 @@ import { Youtube } from './schemas/youtube.schema';
 import { Model, Types } from 'mongoose';
 import { RecentlyVideo } from './schemas/recently_video';
 import { ObjectId } from 'mongodb';
-
-const youtubedl = require('youtube-dl-exec');
 const _ = require('lodash');
 
 @Injectable()
@@ -18,41 +16,7 @@ export class YoutubeService {
   ) {}
 
   async getVideo(videoId: string) {
-    return new Promise((resolve, reject) => {
-      youtubedl(`https://www.youtube.com/watch?v=${videoId}`, {
-        dumpSingleJson: true,
-        noCheckCertificates: true,
-        noWarnings: true,
-        preferFreeFormats: true,
-        addHeader: [
-          'referer:youtube.com',
-          'user-agent:googlebot',
-          'cookie:GPS=1; YSC=mMyd1AuO_rE; VISITOR_INFO1_LIVE=JWPwxVW7pIs; VISITOR_PRIVACY_METADATA=CgJWThIEGgAgVw%3D%3D; PREF=f6=40000000&tz=Asia.Saigon&f7=100; CONSISTENCY=AKreu9v7sGNQYrmytaWddhKPXkQXlTWS6fS7nY_rO5dT-L0wagY96E42KTB-cWOB_w7mdzklEdJXfawhUkkgmURaIpuTp7kTs7pkOIu4zC0YcsSYgAiMPZpgoFGgYJ7ktbFN5Ca7uqGu--8kK_8W8bE',
-        ],
-      })
-        .then((output) => {
-          const selected = (({
-            url,
-            title,
-            thumbnail,
-            description,
-            duration,
-            view_count,
-            channel_url,
-          }) => ({
-            url,
-            title,
-            thumbnail,
-            description,
-            duration,
-            view_count,
-            channel_url,
-          }))(output);
-
-          resolve(selected);
-        })
-        .catch((err) => reject(err));
-    });
+    return {};
   }
 
   async suggest(query: string) {
