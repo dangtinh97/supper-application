@@ -236,7 +236,9 @@ export class YoutubeService {
       .exec();
 
     return finds.map((item) => {
-      return item.video[0];
+      const itemSet:any = item.video[0];
+      itemSet.thumbnail = itemSet.thumbnails[0].url;
+      return itemSet;
     });
   }
 }
