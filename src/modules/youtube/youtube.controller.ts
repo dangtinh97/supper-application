@@ -33,4 +33,9 @@ export class YoutubeController {
   async recentlyVideo(@User() { user_oid }: any) {
     return await this.service.recentlyVideo(user_oid);
   }
+  
+  @Get('/top-channel-view')
+  async topChannelView(){
+    return this.service.topChannelList()
+  }
 }

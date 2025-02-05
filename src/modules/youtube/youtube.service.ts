@@ -118,12 +118,7 @@ export class YoutubeService {
     );
     let dataInsert = _.map(data, (item) => {
       const timeText = _.get(item, 'videoRenderer.lengthText.simpleText', '');
-      let view = _.get(
-        item,
-        'videoRenderer.viewCountText.simpleText',
-        ',',
-        '',
-      );
+      let view = _.get(item, 'videoRenderer.viewCountText.simpleText', ',', '');
       view = !/\d/.test(view) ? 0 : parseInt(view);
       return {
         video_id: _.get(item, 'videoRenderer.videoId'),
@@ -252,4 +247,26 @@ export class YoutubeService {
       return itemSet;
     });
   }
+
+  async topChannelList() {
+    let all= await this.youtubeModel.aggregate([
+      { $sort: { view_of_app: -1 } }, // Sort by view_of_app in descending order
+      {
+        $group: {
+          _id: '$channel.channel_id',
+          channel_info: { $first: '$channel' }, // Capture the entire channel object
+          total_views: { $sum: '$view_of_app' },
+        },
+      },
+      { $sort: { total_views: -1 } }, // Sort by total_views in descending order
+      { $limit: 10 }, // Limit to top 10 channels
+    ]);
+    
+    return all.map((item)=>{
+      const itemEnd = item.channel_info;
+      itemEnd.thumbnail = itemEnd.thumbnail ?? '';
+      return itemEnd;
+    })
+  }
+  
 }
