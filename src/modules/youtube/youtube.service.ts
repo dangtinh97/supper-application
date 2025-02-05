@@ -118,17 +118,19 @@ export class YoutubeService {
     );
     let dataInsert = _.map(data, (item) => {
       const timeText = _.get(item, 'videoRenderer.lengthText.simpleText', '');
+      let view = _.get(
+        item,
+        'videoRenderer.viewCountText.simpleText',
+        ',',
+        '',
+      );
+      view = !/\d/.test(view) ? 0 : parseInt(view);
       return {
         video_id: _.get(item, 'videoRenderer.videoId'),
         thumbnails: _.get(item, 'videoRenderer.thumbnail.thumbnails', []),
         title: _.get(item, 'videoRenderer.title.runs[0].text', ''),
         duration: this.convertToSeconds(timeText),
-        view_of_ytb: parseInt(
-          _.get(item, 'videoRenderer.viewCountText.simpleText', '').replaceAll(
-            ',',
-            '',
-          ),
-        ),
+        view_of_ytb: view,
         channel: {
           name: _.get(item, 'videoRenderer.ownerText.runs[0].text', ''),
           channel_id: _.get(
