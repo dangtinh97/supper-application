@@ -63,7 +63,6 @@ export class YoutubeService {
         client: {
           hl: 'en',
           gl: 'VN',
-          remoteHost: '27.76.201.105',
           deviceMake: 'Apple',
           deviceModel: '',
           userAgent:
