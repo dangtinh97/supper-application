@@ -134,7 +134,17 @@ export class YoutubeService {
           name: _.get(item, 'videoRenderer.ownerText.runs[0].text', ''),
           channel_id: _.get(
             item,
+            'videoRenderer.ownerText.runs[0].navigationEndpoint.browseEndpoint.canonicalBaseUrl',
+            '',
+          ),
+          browser_id: _.get(
+            item,
             'videoRenderer.ownerText.runs[0].navigationEndpoint.browseEndpoint.browseId',
+            '',
+          ),
+          thumbnail: _.get(
+            item,
+            'videoRenderer.channelThumbnailSupportedRenderers.channelThumbnailWithLinkRenderer.thumbnail.thumbnails.0.url',
             '',
           ),
         },
@@ -236,7 +246,7 @@ export class YoutubeService {
       .exec();
 
     return finds.map((item) => {
-      const itemSet:any = item.video[0];
+      const itemSet: any = item.video[0];
       itemSet.thumbnail = itemSet.thumbnails[0].url;
       return itemSet;
     });
