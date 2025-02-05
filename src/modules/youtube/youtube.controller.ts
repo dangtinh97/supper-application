@@ -30,12 +30,15 @@ export class YoutubeController {
   }
 
   @Get('/recently-video')
-  async recentlyVideo(@User() { user_oid }: any) {
-    return await this.service.recentlyVideo(user_oid);
+  async recentlyVideo(
+    @User() { user_oid }: any,
+    @Query('type') type: string = 'me',
+  ) {
+    return await this.service.recentlyVideo(type === 'me' ? user_oid : null);
   }
-  
+
   @Get('/top-channel-view')
-  async topChannelView(){
-    return this.service.topChannelList()
+  async topChannelView() {
+    return this.service.topChannelList();
   }
 }

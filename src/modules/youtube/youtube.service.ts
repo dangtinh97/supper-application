@@ -219,7 +219,11 @@ export class YoutubeService {
       .aggregate([
         {
           $match: {
-            user_oid: new ObjectId(userOid),
+            user_oid: userOid
+              ? new ObjectId(userOid)
+              : {
+                  $exists: true,
+                },
           },
         },
         {
