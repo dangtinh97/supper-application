@@ -259,7 +259,7 @@ export class YoutubeService {
         },
       },
       { $sort: { total_views: -1 } }, // Sort by total_views in descending order
-      { $limit: 10 }, // Limit to top 10 channels
+      { $limit: 20 }, // Limit to top 10 channels
     ]);
 
     return all.map((item) => {
