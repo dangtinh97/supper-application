@@ -275,6 +275,7 @@ export class YoutubeService {
     return all.map((item) => {
       const itemEnd = item.channel_info;
       itemEnd.thumbnail = itemEnd.thumbnail ?? '';
+      itemEnd.total_views = item.total_views;
       return itemEnd;
     });
   }
