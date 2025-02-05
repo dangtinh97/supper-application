@@ -249,7 +249,7 @@ export class YoutubeService {
   }
 
   async topChannelList() {
-    let all= await this.youtubeModel.aggregate([
+    let all = await this.youtubeModel.aggregate([
       { $sort: { view_of_app: -1 } }, // Sort by view_of_app in descending order
       {
         $group: {
@@ -261,12 +261,11 @@ export class YoutubeService {
       { $sort: { total_views: -1 } }, // Sort by total_views in descending order
       { $limit: 10 }, // Limit to top 10 channels
     ]);
-    
-    return all.map((item)=>{
+
+    return all.map((item) => {
       const itemEnd = item.channel_info;
       itemEnd.thumbnail = itemEnd.thumbnail ?? '';
       return itemEnd;
-    })
+    });
   }
-  
 }
