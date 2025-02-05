@@ -244,12 +244,18 @@ export class YoutubeService {
         },
       ])
       .exec();
-
-    return finds.map((item) => {
-      const itemSet: any = item.video[0];
-      itemSet.thumbnail = itemSet.thumbnails[0].url;
-      return itemSet;
-    });
+    return finds
+      .map((item) => {
+        if (!item.video[0]) {
+          return null;
+        }
+        const itemSet: any = item.video[0];
+        itemSet.thumbnail = itemSet.thumbnails ? itemSet.thumbnails[0].url : '';
+        return itemSet;
+      })
+      .filter((item) => {
+        return item !== null;
+      });
   }
 
   async topChannelList() {
