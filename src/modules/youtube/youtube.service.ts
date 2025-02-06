@@ -116,6 +116,16 @@ export class YoutubeService {
       'contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents.0.itemSectionRenderer.contents',
       [],
     );
+    const dataInsert = await this.insertFromListData(data);
+    return dataInsert.map((item) => {
+      return {
+        ...item,
+        thumbnail: _.get(item, 'thumbnails.0.url', ''),
+      };
+    });
+  }
+
+  async insertFromListData(data: any[]) {
     let dataInsert = _.map(data, (item) => {
       const timeText = _.get(item, 'videoRenderer.lengthText.simpleText', '');
       let view = _.get(item, 'videoRenderer.viewCountText.simpleText', ',', '');
@@ -156,12 +166,7 @@ export class YoutubeService {
         { upsert: true },
       );
     }
-    return dataInsert.map((item) => {
-      return {
-        ...item,
-        thumbnail: _.get(item, 'thumbnails.0.url', ''),
-      };
-    });
+    return dataInsert;
   }
 
   convertToSeconds(time: string) {
@@ -277,6 +282,16 @@ export class YoutubeService {
       itemEnd.thumbnail = itemEnd.thumbnail ?? '';
       itemEnd.total_views = item.total_views;
       return itemEnd;
+    });
+  }
+
+  async musicNew(data: any) {
+    const dataInsert = await this.insertFromListData(data);
+    return dataInsert.map((item: any) => {
+      return {
+        ...item,
+        thumbnail: _.get(item, 'thumbnails.0.url', ''),
+      };
     });
   }
 }

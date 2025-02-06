@@ -41,4 +41,9 @@ export class YoutubeController {
   async topChannelView() {
     return this.service.topChannelList();
   }
+
+  @Post('/music-trend')
+  async musicTrend(@Body() data: any){
+    return this.service.musicNew(data);
+  }
 }
