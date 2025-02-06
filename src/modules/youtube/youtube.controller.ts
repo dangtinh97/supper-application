@@ -44,6 +44,6 @@ export class YoutubeController {
 
   @Post('/music-trend')
   async musicTrend(@Body() data: any){
-    return this.service.musicNew(data['data']);
+    return this.service.musicNew(JSON.parse(data['data']));
   }
 }
