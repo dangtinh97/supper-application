@@ -294,4 +294,23 @@ export class YoutubeService {
       };
     });
   }
+
+  async top10() {
+    const dataInsert = await this.youtubeModel.aggregate([
+      {
+        $sort: {
+          view_of_app: -1,
+        },
+      },
+      {
+        $limit: 10,
+      },
+    ]);
+    return dataInsert.map((item) => {
+      return {
+        ...item,
+        thumbnail: _.get(item, 'thumbnails.0.url', ''),
+      };
+    });
+  }
 }
