@@ -255,7 +255,7 @@ export class YoutubeService {
           return null;
         }
         const itemSet: any = item.video[0];
-        itemSet.thumbnail = itemSet.thumbnails ? itemSet.thumbnails[0].url : '';
+        itemSet.thumbnail = itemSet.thumbnails ? itemSet.thumbnails[itemSet.thumbnails.length - 1].url : '';
         return itemSet;
       })
       .filter((item) => {
