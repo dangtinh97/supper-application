@@ -255,7 +255,9 @@ export class YoutubeService {
           return null;
         }
         const itemSet: any = item.video[0];
-        itemSet.thumbnail = itemSet.thumbnails ? itemSet.thumbnails[itemSet.thumbnails.length - 1].url : '';
+        itemSet.thumbnail = itemSet.thumbnails
+          ? itemSet.thumbnails[itemSet.thumbnails.length - 1].url
+          : '';
         return itemSet;
       })
       .filter((item) => {
@@ -312,5 +314,67 @@ export class YoutubeService {
         thumbnail: _.get(item, 'thumbnails.0.url', ''),
       };
     });
+  }
+
+  async saveAndFilterVideoSuggest(data: []) {
+    let dataInsert = _.map(data, (item: any) => {
+      const timeText = _.get(
+        item,
+        'compactVideoRenderer.lengthText.simpleText',
+        '',
+      );
+      let view = _.get(
+        item,
+        'compactVideoRenderer.viewCountText.simpleText',
+        ',',
+        '',
+      );
+      view = !/\d/.test(view) ? 0 : parseInt(view);
+      return {
+        video_id: _.get(item, 'compactVideoRenderer.videoId'),
+        thumbnails: _.get(
+          item,
+          'compactVideoRenderer.thumbnail.thumbnails',
+          [],
+        ),
+        title: _.get(item, 'compactVideoRenderer.title.simpleText', ''),
+        duration: this.convertToSeconds(timeText),
+        view_of_ytb: view,
+        channel: {
+          name: _.get(
+            item,
+            'compactVideoRenderer.longBylineText.runs[0].text',
+            '',
+          ),
+          channel_id: _.get(
+            item,
+            'compactVideoRenderer.longBylineText.runs[0].navigationEndpoint.browseEndpoint.canonicalBaseUrl',
+            '',
+          ),
+          browser_id: _.get(
+            item,
+            'compactVideoRenderer.longBylineText.runs[0].navigationEndpoint.browseEndpoint.browseId',
+            '',
+          ),
+          thumbnail: _.get(
+            item,
+            'compactVideoRenderer.channelThumbnail.thumbnails.0.url',
+            '',
+          ),
+        },
+      };
+    });
+    dataInsert = _.filter(dataInsert, (item: { title: any }) => item.title);
+    console.log(dataInsert.length);
+    for (const item of dataInsert) {
+      await this.youtubeModel.findOneAndUpdate(
+        {
+          video_id: item.video_id,
+        },
+        { ...item },
+        { upsert: true },
+      );
+    }
+    return dataInsert;
   }
 }

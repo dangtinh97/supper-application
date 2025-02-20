@@ -43,12 +43,17 @@ export class YoutubeController {
   }
 
   @Post('/music-trend')
-  async musicTrend(@Body() data: any){
+  async musicTrend(@Body() data: any) {
     return this.service.musicNew(JSON.parse(data['data']));
   }
 
-  @Get("/top10")
-  async top10(){
+  @Get('/top10')
+  async top10() {
     return await this.service.top10();
+  }
+
+  @Post('/video-suggest-by-id')
+  async videoSuggestById(@Body() data: any) {
+    return this.service.saveAndFilterVideoSuggest(JSON.parse(data['data']));
   }
 }
