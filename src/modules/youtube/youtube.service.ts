@@ -362,6 +362,11 @@ export class YoutubeService {
             '',
           ),
         },
+        thumbnail:_.get(
+          item,
+          'compactVideoRenderer.thumbnail.thumbnails.0.url',
+          [],
+        ),
       };
     });
     dataInsert = _.filter(dataInsert, (item: { title: any }) => item.title);
