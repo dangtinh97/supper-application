@@ -170,7 +170,7 @@ export class YoutubeService {
   }
 
   convertToSeconds(time: string) {
-    if(!time){
+    if (!time) {
       return 0;
     }
     try {
@@ -342,50 +342,51 @@ export class YoutubeService {
         return {};
       }
       view = !/\d/.test(view) ? 0 : parseInt(view);
-      try{
+      try {
         return {
-          video_id: _.get(item, 'compactVideoRenderer.videoId'),
-          thumbnails: _.get(
-            item,
-            'compactVideoRenderer.thumbnail.thumbnails',
-            [],
-          ),
-          title: _.get(item, 'compactVideoRenderer.title.simpleText', ''),
-          duration: this.convertToSeconds(timeText ?? '00:00'),
-          view_of_ytb: view,
+          video_id: _.get(item, 'compactVideoRenderer.videoId') || '',
+          thumbnails:
+            _.get(item, 'compactVideoRenderer.thumbnail.thumbnails', []) || [],
+          title: _.get(item, 'compactVideoRenderer.title.simpleText', '') || '',
+          duration: this.convertToSeconds(timeText ?? '00:00') || 0,
+          view_of_ytb: view || 0,
           channel: {
-            name: _.get(
-              item,
-              'compactVideoRenderer.longBylineText.runs[0].text',
-              '',
-            ),
-            channel_id: _.get(
-              item,
-              'compactVideoRenderer.longBylineText.runs[0].navigationEndpoint.browseEndpoint.canonicalBaseUrl',
-              '',
-            ),
-            browser_id: _.get(
-              item,
-              'compactVideoRenderer.longBylineText.runs[0].navigationEndpoint.browseEndpoint.browseId',
-              '',
-            ),
-            thumbnail: _.get(
-              item,
-              'compactVideoRenderer.channelThumbnail.thumbnails.0.url',
-              '',
-            ),
+            name:
+              _.get(
+                item,
+                'compactVideoRenderer.longBylineText.runs[0].text',
+                '',
+              ) || '',
+            channel_id:
+              _.get(
+                item,
+                'compactVideoRenderer.longBylineText.runs[0].navigationEndpoint.browseEndpoint.canonicalBaseUrl',
+                '',
+              ) || '',
+            browser_id:
+              _.get(
+                item,
+                'compactVideoRenderer.longBylineText.runs[0].navigationEndpoint.browseEndpoint.browseId',
+                '',
+              ) || '',
+            thumbnail:
+              _.get(
+                item,
+                'compactVideoRenderer.channelThumbnail.thumbnails.0.url',
+                '',
+              ) || '',
           },
-          thumbnail: _.get(
-            item,
-            'compactVideoRenderer.thumbnail.thumbnails.0.url',
-            [],
-          ),
+          thumbnail:
+            _.get(
+              item,
+              'compactVideoRenderer.thumbnail.thumbnails.0.url',
+              '',
+            ) || '',
         };
       } catch (e) {
-        console.log(videoId, e.message)
+        console.log(videoId, e.message);
         return {};
       }
-
     });
     dataInsert = _.filter(dataInsert, (item: { title: any }) => item.title);
     for (const item of dataInsert) {
