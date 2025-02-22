@@ -56,4 +56,9 @@ export class YoutubeController {
   async videoSuggestById(@Body() data: any) {
     return this.service.saveAndFilterVideoSuggest(JSON.parse(data['data']));
   }
+
+  @Get('/trending')
+  async videoTrending() {
+    return await this.service.videoTrending();
+  }
 }
