@@ -134,7 +134,7 @@ export class YoutubeService {
         video_id: _.get(item, 'videoRenderer.videoId'),
         thumbnails: _.get(item, 'videoRenderer.thumbnail.thumbnails', []),
         title: _.get(item, 'videoRenderer.title.runs[0].text', ''),
-        duration: this.convertToSeconds(timeText),
+        duration: this.convertToSeconds(timeText ?? '00:00'),
         view_of_ytb: view,
         channel: {
           name: _.get(item, 'videoRenderer.ownerText.runs[0].text', ''),
@@ -170,17 +170,24 @@ export class YoutubeService {
   }
 
   convertToSeconds(time: string) {
-    const parts = time.split(':').map(Number);
-
-    // If the time includes hours
-    if (parts.length === 3) {
-      const [hours, minutes, seconds] = parts;
-      return hours * 3600 + minutes * 60 + seconds;
+    if(!time){
+      return 0;
     }
+    try {
+      const parts = time.split(':').map(Number);
 
-    // If the time does not include hours
-    const [minutes, seconds] = parts;
-    return minutes * 60 + seconds;
+      // If the time includes hours
+      if (parts.length === 3) {
+        const [hours, minutes, seconds] = parts;
+        return hours * 3600 + minutes * 60 + seconds;
+      }
+
+      // If the time does not include hours
+      const [minutes, seconds] = parts;
+      return minutes * 60 + seconds;
+    } catch (e) {
+      return 0;
+    }
   }
 
   async viewVideo(videoId: string, userOid: string) {
@@ -232,6 +239,11 @@ export class YoutubeService {
           },
         },
         {
+          $sort: {
+            updated_at: -1,
+          },
+        },
+        {
           $limit: 20,
         },
         {
@@ -242,13 +254,9 @@ export class YoutubeService {
             as: 'video',
           },
         },
-        {
-          $sort: {
-            updated_at: -1,
-          },
-        },
       ])
       .exec();
+    console.log(finds);
     return finds
       .map((item) => {
         if (!item.video[0]) {
@@ -329,48 +337,57 @@ export class YoutubeService {
         ',',
         '',
       );
+      const videoId = _.get(item, 'compactVideoRenderer.videoId');
+      if (!videoId) {
+        return {};
+      }
       view = !/\d/.test(view) ? 0 : parseInt(view);
-      return {
-        video_id: _.get(item, 'compactVideoRenderer.videoId'),
-        thumbnails: _.get(
-          item,
-          'compactVideoRenderer.thumbnail.thumbnails',
-          [],
-        ),
-        title: _.get(item, 'compactVideoRenderer.title.simpleText', ''),
-        duration: this.convertToSeconds(timeText),
-        view_of_ytb: view,
-        channel: {
-          name: _.get(
+      try{
+        return {
+          video_id: _.get(item, 'compactVideoRenderer.videoId'),
+          thumbnails: _.get(
             item,
-            'compactVideoRenderer.longBylineText.runs[0].text',
-            '',
+            'compactVideoRenderer.thumbnail.thumbnails',
+            [],
           ),
-          channel_id: _.get(
-            item,
-            'compactVideoRenderer.longBylineText.runs[0].navigationEndpoint.browseEndpoint.canonicalBaseUrl',
-            '',
-          ),
-          browser_id: _.get(
-            item,
-            'compactVideoRenderer.longBylineText.runs[0].navigationEndpoint.browseEndpoint.browseId',
-            '',
-          ),
+          title: _.get(item, 'compactVideoRenderer.title.simpleText', ''),
+          duration: this.convertToSeconds(timeText ?? '00:00'),
+          view_of_ytb: view,
+          channel: {
+            name: _.get(
+              item,
+              'compactVideoRenderer.longBylineText.runs[0].text',
+              '',
+            ),
+            channel_id: _.get(
+              item,
+              'compactVideoRenderer.longBylineText.runs[0].navigationEndpoint.browseEndpoint.canonicalBaseUrl',
+              '',
+            ),
+            browser_id: _.get(
+              item,
+              'compactVideoRenderer.longBylineText.runs[0].navigationEndpoint.browseEndpoint.browseId',
+              '',
+            ),
+            thumbnail: _.get(
+              item,
+              'compactVideoRenderer.channelThumbnail.thumbnails.0.url',
+              '',
+            ),
+          },
           thumbnail: _.get(
             item,
-            'compactVideoRenderer.channelThumbnail.thumbnails.0.url',
-            '',
+            'compactVideoRenderer.thumbnail.thumbnails.0.url',
+            [],
           ),
-        },
-        thumbnail:_.get(
-          item,
-          'compactVideoRenderer.thumbnail.thumbnails.0.url',
-          [],
-        ),
-      };
+        };
+      } catch (e) {
+        console.log(videoId, e.message)
+        return {};
+      }
+
     });
     dataInsert = _.filter(dataInsert, (item: { title: any }) => item.title);
-    console.log(dataInsert.length);
     for (const item of dataInsert) {
       await this.youtubeModel.findOneAndUpdate(
         {
