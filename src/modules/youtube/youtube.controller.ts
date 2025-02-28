@@ -26,6 +26,7 @@ export class YoutubeController {
 
   @Post('/view-log')
   async viewVideo(@Body() body: any, @User() { user_oid }: any) {
+    return {};
     return await this.service.viewVideo(body.video_id, user_oid);
   }
 

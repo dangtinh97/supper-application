@@ -15,6 +15,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt-strategy/jwt-strategy.service';
 import { ProfileModule } from './modules/profile/profile.module';
 import { NotificationModule } from './modules/notification/notification.module';
+import { ChatModule } from "./modules/chat/chat.module";
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { NotificationModule } from './modules/notification/notification.module';
     AuthModule,
     ProfileModule,
     NotificationModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService, TaskService, JwtService, ConfigService, JwtStrategy],
