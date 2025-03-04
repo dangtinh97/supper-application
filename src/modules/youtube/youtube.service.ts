@@ -256,7 +256,6 @@ export class YoutubeService {
         },
       ])
       .exec();
-    console.log(finds);
     return finds
       .map((item) => {
         if (!item.video[0]) {
@@ -274,7 +273,7 @@ export class YoutubeService {
   }
 
   async topChannelList() {
-    let all = await this.youtubeModel.aggregate([
+    const all = await this.youtubeModel.aggregate([
       { $sort: { view_of_app: -1 } }, // Sort by view_of_app in descending order
       {
         $group: {

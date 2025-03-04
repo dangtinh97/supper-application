@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from "@nestjs/common";
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -16,6 +16,8 @@ import { JwtStrategy } from './jwt-strategy/jwt-strategy.service';
 import { ProfileModule } from './modules/profile/profile.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { ChatModule } from "./modules/chat/chat.module";
+import { SettingModule } from "./share_modules/setting/setting.module";
+import { HeaderMiddleware } from "./middlewares/header.middleware";
 
 @Module({
   imports: [
@@ -57,8 +59,13 @@ import { ChatModule } from "./modules/chat/chat.module";
     ProfileModule,
     NotificationModule,
     ChatModule,
+    SettingModule,
   ],
   controllers: [AppController],
   providers: [AppService, TaskService, JwtService, ConfigService, JwtStrategy],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(HeaderMiddleware).forRoutes('*');
+  }
+}

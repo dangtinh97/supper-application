@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { YoutubeService } from './youtube.service';
 import { JwtAuthGuard } from '../../guards/auth.guard';
 import { User } from '../../decorators/user.decorator';
@@ -25,8 +33,14 @@ export class YoutubeController {
   }
 
   @Post('/view-log')
-  async viewVideo(@Body() body: any, @User() { user_oid }: any) {
-    return {};
+  async viewVideo(
+    @Req() request: any,
+    @Body() body: any,
+    @User() { user_oid }: any,
+  ) {
+    if (this.isReview(request)) {
+      return {};
+    }
     return await this.service.viewVideo(body.video_id, user_oid);
   }
 
@@ -34,7 +48,11 @@ export class YoutubeController {
   async recentlyVideo(
     @User() { user_oid }: any,
     @Query('type') type: string = 'me',
+    @Req() req: Request,
   ) {
+    if (this.isReview(req)) {
+      return [];
+    }
     return await this.service.recentlyVideo(type === 'me' ? user_oid : null);
   }
 
@@ -44,8 +62,10 @@ export class YoutubeController {
   }
 
   @Post('/music-trend')
-  async musicTrend(@Body() data: any) {
-    return await this.service.top10();
+  async musicTrend(@Req() req: Request, @Body() data: any) {
+    if(this.isReview(req)){
+      return await this.service.top10();
+    }
     return this.service.musicNew(JSON.parse(data['data']));
   }
 
@@ -62,5 +82,9 @@ export class YoutubeController {
   @Get('/trending')
   async videoTrending() {
     return await this.service.videoTrending();
+  }
+
+  isReview(req: Request) {
+    return req.headers['app-review'] === 'true';
   }
 }
