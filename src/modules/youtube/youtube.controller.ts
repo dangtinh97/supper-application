@@ -51,7 +51,7 @@ export class YoutubeController {
     @Req() req: Request,
   ) {
     if (this.isReview(req)) {
-      return [];
+      return await this.service.noCopyRightSounds();
     }
     return await this.service.recentlyVideo(type === 'me' ? user_oid : null);
   }
