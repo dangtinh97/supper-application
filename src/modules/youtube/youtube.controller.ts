@@ -83,7 +83,10 @@ export class YoutubeController {
   }
 
   @Get('/trending')
-  async videoTrending() {
+  async videoTrending(@Req() req: Request) {
+    if (this.isReview(req)) {
+      return await this.service.noCopyRightSounds();
+    }
     return await this.service.videoTrending();
   }
 

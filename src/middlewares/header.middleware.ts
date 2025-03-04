@@ -9,7 +9,7 @@ export class HeaderMiddleware implements NestMiddleware {
   async use(req: any, res: any, next: (error?: Error | any) => void) {
     //throw new Error('Method not implemented.');
     const appVersion = parseInt(req.headers['app-version'] ?? '0', 0);
-    const appName = req.headers['app-name'] ?? '';
+    const appName = req.headers['app-name'] ?? 'com.app.drumtifypro';
     let configAppVersion = await this.appConfigService.getDataByKey(
       `app_version_${appName}`,
     );
