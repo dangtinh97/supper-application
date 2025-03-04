@@ -63,14 +63,17 @@ export class YoutubeController {
 
   @Post('/music-trend')
   async musicTrend(@Req() req: Request, @Body() data: any) {
-    if(this.isReview(req)){
-      return await this.service.top10();
+    if (this.isReview(req)) {
+      return await this.service.noCopyRightSounds();
     }
     return this.service.musicNew(JSON.parse(data['data']));
   }
 
   @Get('/top10')
-  async top10() {
+  async top10(@Req() req: Request) {
+    if (this.isReview(req)) {
+      return await this.service.noCopyRightSounds();
+    }
     return await this.service.top10();
   }
 

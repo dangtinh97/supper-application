@@ -419,6 +419,26 @@ export class YoutubeService {
         : '';
       return itemSet;
     });
+  }
 
+  async noCopyRightSounds(){
+    const list = await this.youtubeModel.aggregate([
+      {
+        $match: {
+          'channel.channel_id': '/@NoCopyrightSounds',
+        },
+      },
+      {
+        $limit: 20,
+      },
+    ]);
+
+    return list.map((item) => {
+      const itemSet: any = item;
+      itemSet.thumbnail = itemSet.thumbnails
+        ? itemSet.thumbnails[itemSet.thumbnails.length - 1].url
+        : '';
+      return itemSet;
+    });
   }
 }
