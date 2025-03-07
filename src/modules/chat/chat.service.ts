@@ -118,7 +118,7 @@ export class ChatService {
     const find = await this.chatModel.findOne({
       from_user_oid: new ObjectId(userOid),
     });
-    let withUserOid = find.with_user_oid;
+    const withUserOid = find.with_user_oid;
     await find.updateOne({
       status: StatusChat.FREE,
       with_user_oid: null,
