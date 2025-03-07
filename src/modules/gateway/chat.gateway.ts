@@ -42,6 +42,6 @@ export class ChatGateway
     @ConnectedSocket() client: any,
   ) {
     const { room_id, token } = client.handshake.auth;
-    client.to(room_id, data);
+    client.to(room_id).emit('SEND_MESSAGE', data);
   }
 }
