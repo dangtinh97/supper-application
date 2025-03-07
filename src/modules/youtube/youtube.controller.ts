@@ -10,6 +10,7 @@ import {
 import { YoutubeService } from './youtube.service';
 import { JwtAuthGuard } from '../../guards/auth.guard';
 import { User } from '../../decorators/user.decorator';
+import * as _ from 'lodash';
 
 @Controller('youtube')
 @UseGuards(JwtAuthGuard)
@@ -79,7 +80,11 @@ export class YoutubeController {
 
   @Post('/video-suggest-by-id')
   async videoSuggestById(@Body() data: any) {
-    return this.service.saveAndFilterVideoSuggest(JSON.parse(data['data']));
+    return this.service.saveAndFilterVideoSuggest(
+      typeof data['data'] === 'string'
+        ? JSON.parse(data['data'])
+        : data['data'],
+    );
   }
 
   @Get('/trending')
@@ -92,5 +97,28 @@ export class YoutubeController {
 
   isReview(req: Request) {
     return req.headers['app-review'] === 'true';
+  }
+
+  @Post('/short-next')
+  async shortNext(@Req() request: any, @Body() body: any) {
+    const data = JSON.parse(body['data'])['entries'];
+    return data.map((item:any) => {
+      return {
+        video_id: _.get(item, 'command.reelWatchEndpoint.videoId'),
+        thumbnail: _.get(
+          item,
+          'command.reelWatchEndpoint.thumbnail.thumbnails.0.url',
+        ),
+        title: '',
+        duration: 0,
+        view_of_ytb: 0,
+        channel: {
+          name: '',
+          channel_id: '',
+          thumbnail: '',
+          thumbnails: [],
+        },
+      };
+    });
   }
 }
