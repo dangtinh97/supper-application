@@ -18,6 +18,7 @@ import { NotificationModule } from './modules/notification/notification.module';
 import { ChatModule } from "./modules/chat/chat.module";
 import { SettingModule } from "./share_modules/setting/setting.module";
 import { HeaderMiddleware } from "./middlewares/header.middleware";
+import { GatewayModule } from "./modules/gateway/gateway.module";
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { HeaderMiddleware } from "./middlewares/header.middleware";
     NotificationModule,
     ChatModule,
     SettingModule,
+    GatewayModule,
   ],
   controllers: [AppController],
   providers: [AppService, TaskService, JwtService, ConfigService, JwtStrategy],
