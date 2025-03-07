@@ -107,7 +107,7 @@ export class ChatService {
     );
     if (findNotMe.length == 0) {
       return {
-        status: 204,
+        status: 200,
         message:
           '[Chat ẩn danh] Chúng tôi đã kết nối bạn và 1 ai đó, hãy nói "Xin chào" để bắt đầu nhé..',
       };
