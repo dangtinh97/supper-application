@@ -4,7 +4,7 @@ import { Chat, StatusChat } from './schemas/chat.schema';
 import { Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
 import { Message } from './schemas/message.schema';
-
+import * as dayjs from "dayjs";
 @Injectable()
 export class ChatService {
   constructor(
@@ -206,8 +206,9 @@ export class ChatService {
 
     return messages.map((item) => {
       return {
-        message: item.message,
-        send_by_me: item.from_user_oid.toString() === userOid,
+        text: item.message,
+        timestamp: dayjs(item.created_at).format('HH:mm'),
+        isSentByCurrentUser: item.from_user_oid.toString() === userOid,
       };
     });
   }
