@@ -26,6 +26,7 @@ export class HeaderMiddleware implements NestMiddleware {
       return res.status(200).json({
         status: 4003,
         message:
+          configAppVersion.message ??
           'Bản cập nhật mới đã sẵn sàng! Trải nghiệm tốt hơn đang chờ bạn – cập nhật ngay nhé!',
         data: {},
       });
