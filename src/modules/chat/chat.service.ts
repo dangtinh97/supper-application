@@ -42,7 +42,12 @@ export class ChatService {
           '[Chat ẩn danh] Bạn đang trong hàng đợi kết nối, hãy lắng nghe 1 bản nhạc trong khi chờ đợi nhé.',
       };
     }
-    return {};
+    return {
+      status: 200,
+      message:
+        '[Chat ẩn danh] Bạn đang trong hàng đợi kết nối, hãy lắng nghe 1 bản nhạc trong khi chờ đợi nhé.',
+      room_id: find.room_id,
+    };
   }
 
   async findConnect(userOid) {
@@ -81,7 +86,7 @@ export class ChatService {
           '[Chat ẩn danh] Bạn đang trong hàng đợi kết nối, hãy lắng nghe 1 bản nhạc trong khi chờ đợi nhé.',
       };
     }
-    console.log(findNotMe[0]._id);
+    const roomId = this.generateUUID();
     await this.chatModel.updateOne(
       {
         from_user_oid: findNotMe[0]._id,
@@ -90,6 +95,7 @@ export class ChatService {
         $set: {
           with_user_oid: new ObjectId(userOid),
           status: StatusChat.CONNECTED,
+          room_id: roomId,
         },
       },
     );
@@ -102,6 +108,7 @@ export class ChatService {
         $set: {
           with_user_oid: findNotMe[0]._id,
           status: StatusChat.CONNECTED,
+          room_id: roomId,
         },
       },
     );
@@ -109,6 +116,7 @@ export class ChatService {
       status: 200,
       message:
         '[Chat ẩn danh] Chúng tôi đã kết nối bạn và 1 ai đó, hãy nói "Xin chào" để bắt đầu nhé..',
+      room_id: roomId,
     };
   }
 
@@ -138,5 +146,31 @@ export class ChatService {
       status: 204,
       message: '[Chat ẩn danh] Bạn đã ngắt kết nối.',
     };
+  }
+
+  generateUUID() {
+    // Public Domain/MIT
+    var d = new Date().getTime(); //Timestamp
+    var d2 =
+      (typeof performance !== 'undefined' &&
+        performance.now &&
+        performance.now() * 1000) ||
+      0; //Time in microseconds since page-load or 0 if unsupported
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
+      /[xy]/g,
+      function (c) {
+        var r = Math.random() * 16; //random number between 0 and 16
+        if (d > 0) {
+          //Use timestamp until depleted
+          r = (d + r) % 16 | 0;
+          d = Math.floor(d / 16);
+        } else {
+          //Use microseconds since page-load if supported
+          r = (d2 + r) % 16 | 0;
+          d2 = Math.floor(d2 / 16);
+        }
+        return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+      },
+    );
   }
 }

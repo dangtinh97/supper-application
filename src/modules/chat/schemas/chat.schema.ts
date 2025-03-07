@@ -19,6 +19,9 @@ export class Chat {
 
   @Prop()
   status: string;
+
+  @Prop()
+  room_id: string;
 }
 
 export const ChatSchema = SchemaFactory.createForClass(Chat);
