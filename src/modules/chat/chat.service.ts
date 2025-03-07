@@ -3,12 +3,15 @@ import { Injectable } from '@nestjs/common';
 import { Chat, StatusChat } from './schemas/chat.schema';
 import { Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
+import { Message } from './schemas/message.schema';
 
 @Injectable()
 export class ChatService {
   constructor(
     @InjectModel(Chat.name)
     private chatModel: Model<Chat>,
+    @InjectModel(Message.name)
+    private messageModel: Model<Message>,
   ) {}
 
   async statusOfMe(userOid: string) {
@@ -172,5 +175,40 @@ export class ChatService {
         return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
       },
     );
+  }
+
+  async sendMessage(chatId: string, userOid: string, message: string) {
+    await this.messageModel.create({
+      room_id: chatId,
+      from_user_oid: new ObjectId(userOid),
+      message: message.trim(),
+      read: false,
+    });
+    return {};
+  }
+
+  async readMessage(chatId: string, userOid: string) {
+    const messages = await this.messageModel.aggregate([
+      {
+        $match: {
+          room_id: chatId,
+        },
+      },
+      {
+        $sort: {
+          _id: -1,
+        },
+      },
+      {
+        $limit: 50,
+      },
+    ]);
+
+    return messages.map((item) => {
+      return {
+        message: item.message,
+        send_by_me: item.from_user_oid.toString() === userOid,
+      };
+    });
   }
 }
