@@ -81,10 +81,10 @@ export class ChatService {
           '[Chat ẩn danh] Bạn đang trong hàng đợi kết nối, hãy lắng nghe 1 bản nhạc trong khi chờ đợi nhé.',
       };
     }
-
+    console.log(findNotMe[0]._id);
     await this.chatModel.updateOne(
       {
-        from_user_oid: new ObjectId(findNotMe[1]._id),
+        from_user_oid: findNotMe[0]._id,
       },
       {
         $set: {
@@ -100,18 +100,16 @@ export class ChatService {
       },
       {
         $set: {
-          with_user_oid: new ObjectId(findNotMe[1]._id),
+          with_user_oid: findNotMe[0]._id,
           status: StatusChat.CONNECTED,
         },
       },
     );
-    if (findNotMe.length == 0) {
-      return {
-        status: 200,
-        message:
-          '[Chat ẩn danh] Chúng tôi đã kết nối bạn và 1 ai đó, hãy nói "Xin chào" để bắt đầu nhé..',
-      };
-    }
+    return {
+      status: 200,
+      message:
+        '[Chat ẩn danh] Chúng tôi đã kết nối bạn và 1 ai đó, hãy nói "Xin chào" để bắt đầu nhé..',
+    };
   }
 
   async disconnect(userOid) {
