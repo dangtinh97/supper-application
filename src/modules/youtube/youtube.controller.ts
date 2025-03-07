@@ -101,6 +101,9 @@ export class YoutubeController {
 
   @Post('/short-next')
   async shortNext(@Req() request: any, @Body() body: any) {
+    if(this.isReview(request)){
+      return this.service.noCopyRightSounds()
+    }
     const data = JSON.parse(body['data'])['entries'];
     return data.map((item:any) => {
       return {

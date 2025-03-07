@@ -429,7 +429,7 @@ export class YoutubeService {
         },
       },
       {
-        $limit: 20,
+        $sample: { size: 20 }, // Lấy ngẫu nhiên 20 bản ghi
       },
     ]);
 
