@@ -89,7 +89,7 @@ export class ChatService {
     const roomId = this.generateUUID();
     await this.chatModel.updateOne(
       {
-        from_user_oid: findNotMe[0]._id,
+        _id: findNotMe[0]._id,
       },
       {
         $set: {
@@ -106,7 +106,7 @@ export class ChatService {
       },
       {
         $set: {
-          with_user_oid: findNotMe[0]._id,
+          with_user_oid: findNotMe[0].from_user_oid,
           status: StatusChat.CONNECTED,
           room_id: roomId,
         },
