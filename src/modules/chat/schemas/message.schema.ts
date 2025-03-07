@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
   collection: 'messages',
 })
 export class Message {
-  @Prop({ type: mongoose.Schema.Types.ObjectId, unique: true })
+  @Prop({ type: mongoose.Schema.Types.ObjectId })
   from_user_oid: mongoose.Types.ObjectId;
   @Prop()
   room_id: string;
