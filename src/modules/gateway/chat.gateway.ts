@@ -79,5 +79,19 @@ export class ChatGateway
     const { room_id } = data;
     console.log('Connect Chat');
     client.join(room_id);
+    setTimeout(()=>{
+      client.to(room_id).emit('STATUS_CHAT',{
+        status: 'online',
+        room_id: room_id,
+      });
+    }, 1000);
+  }
+  @SubscribeMessage('PING_STATUS_CHAT')
+  async statusChat(@MessageBody() data: any, @ConnectedSocket() client: any) {
+    const { room_id, status } = data;
+    client.to(room_id).emit('PING_STATUS_CHAT', {
+      room_id: room_id,
+      status: status,
+    });
   }
 }
