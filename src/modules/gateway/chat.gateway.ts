@@ -79,8 +79,8 @@ export class ChatGateway
     const { room_id } = data;
     console.log('Connect Chat');
     client.join(room_id);
-    setTimeout(()=>{
-      client.to(room_id).emit('STATUS_CHAT',{
+    setTimeout(() => {
+      client.to(room_id).emit('STATUS_CHAT', {
         status: 'online',
         room_id: room_id,
       });
