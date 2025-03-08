@@ -61,6 +61,16 @@ export class ChatGateway
     // client.to(room_id).emit('SEND_MESSAGE', data);
   }
 
+  @SubscribeMessage('DISCONNECT_CHAT')
+  async disconnectChat(
+    @MessageBody() data: any,
+    @ConnectedSocket() client: any,
+  ) {
+    const { room_id, token } = client.handshake.auth;
+    console.log('Connect Chat');
+    // client.to(room_id).emit('SEND_MESSAGE', data);
+  }
+
   @SubscribeMessage("JOIN_ROOM")
   async joinRoom(
     @MessageBody() data: any,
