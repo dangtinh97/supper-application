@@ -12,17 +12,23 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
   document.addEventListener("DOMContentLoaded",()=>{
-    let socket = io('https://tool.myoupip.com/chat',{
+    //https://tool.myoupip.com/chat
+    //http://localhost:3000
+    const base = 'http://localhost:3000'
+    let socket = io(`${base}/chat`,{
       auth:{
-        token:'121212',
+        token:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NzgxMmYyNzQzYTRjZTMyZGUzM2M0NDUiLCJpYXQiOjE3NDE0MDQ5NTQsImV4cCI6MTc3Mjk2MjU1NH0.WXoqrb95ucAHrqvSyYg9Ji_TBKdhPeBPF1tNQq7BNhM',
         room_id:'1efabda4-3ffa-4998-899e-e81f12aacfb6'
       },
     })
-    setTimeout(()=>{
-      socket.emit('SEND_MESSAGE',{
-        message: '11112121',
-      })
-    },5000)
+    socket.on('connect',()=>{
+      setTimeout(()=>{
+        socket.emit('JOIN_ROOM',{
+          message: '1efabda4-3ffa-4998-899e-e81f12aacfb6',
+        })
+      },1000)
+    })
+
   })
 </script>
 </body>

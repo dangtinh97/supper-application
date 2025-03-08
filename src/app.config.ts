@@ -6,4 +6,7 @@ export class AppConfig {
 
   @IsString()
   readonly MONGODB_URI: string;
+
+  @IsString()
+  readonly BASE_URL: string;
 }

@@ -10,7 +10,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'node:net';
 
-@WebSocketGateway({ namespace: 'chat', cors: true })
+@WebSocketGateway({ namespace: '/chat', cors: true })
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
@@ -23,8 +23,13 @@ export class ChatGateway
         id: client.id,
       });
       const { room_id, token } = client.handshake.auth;
-      client.join(room_id);
-      console.log(token, room_id);
+      const payloadBase64 = token.split('.')[1];
+      const payload = JSON.parse(
+        Buffer.from(payloadBase64, 'base64').toString('utf-8'),
+      );
+      console.log('Sub:', payload.sub);
+      client.join(payload.sub);
+      // console.log(token, room_id);
     }, 500);
   }
 
@@ -42,6 +47,17 @@ export class ChatGateway
     @ConnectedSocket() client: any,
   ) {
     const { room_id, token } = client.handshake.auth;
-    client.to(room_id).emit('SEND_MESSAGE', data);
+    const roomId = data['room_id'] || room_id;
+    client.to(roomId).emit('SEND_MESSAGE', data);
+  }
+
+  @SubscribeMessage('CONNECT_CHAT')
+  async connectChat(
+    @MessageBody() data: any,
+    @ConnectedSocket() client: any,
+  ) {
+    const { room_id, token } = client.handshake.auth;
+    console.log('Connect Chat');
+    // client.to(room_id).emit('SEND_MESSAGE', data);
   }
 }

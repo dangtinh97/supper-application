@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
 import { Message } from './schemas/message.schema';
 import * as dayjs from 'dayjs';
+import { SocketClientService } from '../gateway/socket-client.service';
 
 @Injectable()
 export class ChatService {
@@ -13,6 +14,7 @@ export class ChatService {
     private chatModel: Model<Chat>,
     @InjectModel(Message.name)
     private messageModel: Model<Message>,
+    private socketClientService: SocketClientService,
   ) {}
 
   async statusOfMe(userOid: string) {
@@ -116,6 +118,12 @@ export class ChatService {
         },
       },
     );
+    this.socketClientService.pushClient({
+      event: 'CONNECT_CHAT',
+      room_id: findNotMe[0].from_user_oid.toString(),
+      message: 'Có người vừa kết nối với bạn, hãy nói xin chào để bắt đầu',
+    });
+
     return {
       status: 200,
       message:
@@ -145,6 +153,12 @@ export class ChatService {
           },
         },
       );
+
+      this.socketClientService.pushClient({
+        event: 'DISCONNECT_CHAT',
+        room_id: withUserOid.toString(),
+        message: 'Có người vừa kết nối với bạn, hãy nói xin chào để bắt đầu',
+      });
     }
     return {
       status: 204,
