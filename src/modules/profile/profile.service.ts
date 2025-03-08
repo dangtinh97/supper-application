@@ -21,6 +21,8 @@ export class ProfileService {
         },
       },
     );
-    return {};
+    return {
+      uid_device: uidDevice,
+    };
   }
 }
