@@ -60,4 +60,14 @@ export class ChatGateway
     console.log('Connect Chat');
     // client.to(room_id).emit('SEND_MESSAGE', data);
   }
+
+  @SubscribeMessage("JOIN_ROOM")
+  async joinRoom(
+    @MessageBody() data: any,
+    @ConnectedSocket() client: any,
+  ) {
+    const { room_id } = data;
+    console.log('Connect Chat');
+    client.join(room_id);
+  }
 }
