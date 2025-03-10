@@ -239,11 +239,6 @@ export class YoutubeService {
           },
         },
         {
-          $sort: {
-            updated_at: -1,
-          },
-        },
-        {
           $lookup: {
             from: 'ytb_video',
             localField: 'video_id',
@@ -259,6 +254,11 @@ export class YoutubeService {
         },
         {
           $replaceRoot: { newRoot: '$doc' },
+        },
+        {
+          $sort: {
+            updated_at: -1,
+          },
         },
         {
           $limit: 20,
