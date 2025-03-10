@@ -38,7 +38,6 @@ export class NotificationService {
 
   async sendFCMWithData(data: string): Promise<any> {
     const log: Record<string, any> = { data };
-
     try {
       const url = this.URL_FCM.replace('__PROJECT_ID__', this.projectId);
       const headers = {
@@ -54,13 +53,6 @@ export class NotificationService {
         },
       });
       console.log(response);
-      // const { status, data: responseBody } = response;
-      //
-      // console.log('sendFCM response:', responseBody);
-      // console.log('sendFCM status:', status);
-      //
-      // log.status = status;
-      // log.response = responseBody;
     } catch (error) {
       console.error('Error sending FCM:', error);
       log.error = error.stack;
@@ -86,5 +78,10 @@ export class NotificationService {
     } catch (error) {
       throw new Error('Token authentication failed: ' + error.message);
     }
+  }
+
+  async sendNotificationWithChannel(){
+    const token = await this.getToken();
+    console.log(token);
   }
 }

@@ -121,7 +121,8 @@ export class ChatService {
     this.socketClientService.pushClient({
       event: 'CONNECT_CHAT',
       room_id: findNotMe[0].from_user_oid.toString(),
-      message: '[Chat ẩn danh] Có người vừa kết nối với bạn, hãy nói xin chào để bắt đầu',
+      message:
+        '[Chat ẩn danh] Có người vừa kết nối với bạn, hãy nói xin chào để bắt đầu',
     });
 
     return {
