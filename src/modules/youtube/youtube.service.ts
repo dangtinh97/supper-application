@@ -244,15 +244,24 @@ export class YoutubeService {
           },
         },
         {
-          $limit: 20,
-        },
-        {
           $lookup: {
             from: 'ytb_video',
             localField: 'video_id',
             foreignField: 'video_id',
             as: 'video',
           },
+        },
+        {
+          $group: {
+            _id: '$video_id',
+            doc: { $first: '$$ROOT' }, // Lấy bản ghi mới nhất của mỗi video_id
+          },
+        },
+        {
+          $replaceRoot: { newRoot: '$doc' },
+        },
+        {
+          $limit: 20,
         },
       ])
       .exec();
