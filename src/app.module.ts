@@ -19,6 +19,7 @@ import { ChatModule } from "./modules/chat/chat.module";
 import { SettingModule } from "./share_modules/setting/setting.module";
 import { HeaderMiddleware } from "./middlewares/header.middleware";
 import { GatewayModule } from "./modules/gateway/gateway.module";
+import { UserModule } from "./modules/user/user.module";
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { GatewayModule } from "./modules/gateway/gateway.module";
     ChatModule,
     SettingModule,
     GatewayModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService, TaskService, JwtService, ConfigService, JwtStrategy],
