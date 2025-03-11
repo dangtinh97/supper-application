@@ -36,13 +36,14 @@ export class NotificationService {
     return this.sendFCMWithData(jsonString);
   }
 
-  async sendFCMWithData(data: string): Promise<any> {
+  async sendFCMWithData(data: any): Promise<any> {
     const log: Record<string, any> = { data };
     try {
+      const auth = await this.getToken()
       const url = this.URL_FCM.replace('__PROJECT_ID__', this.projectId);
       const headers = {
         'Content-Type': 'application/json',
-        Authorization: this.keyAuth,
+        Authorization: auth,
       };
 
       const response = await fetch(url, {
@@ -52,7 +53,8 @@ export class NotificationService {
           ...headers,
         },
       });
-      console.log(response);
+      const jsonResponse = await response.json();
+      log.reult = jsonResponse;
     } catch (error) {
       console.error('Error sending FCM:', error);
       log.error = error.stack;
@@ -80,8 +82,27 @@ export class NotificationService {
     }
   }
 
-  async sendNotificationWithChannel(){
-    const token = await this.getToken();
-    console.log(token);
+  async sendNotificationWithChannel() {
+    this.keyAuth = await this.getToken();
+    /*
+    * {
+        to: '/topics/listen_music',
+        notification: {
+          title: 'YouPiP thư giãn',
+          body: 'Nghỉ ngơi và nghe những bài hát mà bạn yêu thích thôi nào?',
+        },
+      }*/
+
+    const data = {
+      message: {
+        topic: 'daily',
+        notification: {
+          title: 'YouPiP thư giãn',
+          body: 'Nghỉ ngơi và nghe những bài hát mà bạn yêu thích thôi nào?',
+        },
+      },
+    };
+    const curl = await this.sendFCMWithData(data);
+    return curl;
   }
 }
