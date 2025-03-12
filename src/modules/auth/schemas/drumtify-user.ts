@@ -16,12 +16,15 @@ export class DrumtifyUser extends BaseModel {
 
   @Prop()
   token_fcm: string;
-  
+
   @Prop()
   login_last: Date;
-  
+
   @Prop()
   full_name: string;
+
+  @Prop()
+  app_version: string;
 }
 
 export const DrumtifyUserSchema = SchemaFactory.createForClass(DrumtifyUser);

@@ -12,13 +12,14 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(uidDevice: string, token: string) {
+  async login(uidDevice: string, appVersion: string) {
     const update = await this.drumtifyUserModel.findOneAndUpdate(
       {
         uid_device: uidDevice,
       },
       {
         login_last: new Date(),
+        app_version: appVersion,
       },
       {
         upsert: true,

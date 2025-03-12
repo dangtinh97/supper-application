@@ -10,6 +10,7 @@ export class DrumtifyAuthController {
   @Post('/login')
   async login(@Req() req: Request) {
     const uidDevice = req.headers['uid-device'];
-    return await this.service.login(uidDevice, '');
+    const appVersion = req.headers['app-version'];
+    return await this.service.login(uidDevice, appVersion);
   }
 }
