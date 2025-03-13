@@ -4,6 +4,7 @@ import { DrumtifyUser } from '../auth/schemas/drumtify-user';
 import { Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
 import { VideoPlaylist } from './schemas/video-playlist.schema';
+import { YoutubeService } from '../youtube/youtube.service';
 
 @Injectable()
 export class UserService {
@@ -12,6 +13,7 @@ export class UserService {
     private userModel: Model<DrumtifyUser>,
     @InjectModel(VideoPlaylist.name)
     private videoPlayListModel: Model<VideoPlaylist>,
+    private youtubeService: YoutubeService,
   ) {}
 
   async updateSocketId(userOid: string, socketId: string) {
@@ -103,5 +105,12 @@ export class UserService {
         track: item.video_ids.length,
       };
     });
+  }
+
+  async videoInList(id: string) {
+    const find: any = await this.videoPlayListModel.findOne({
+      _id: new ObjectId(id),
+    });
+    return await this.youtubeService.findVideoByIds(find.video_ids || []);
   }
 }

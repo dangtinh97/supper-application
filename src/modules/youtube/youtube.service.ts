@@ -409,7 +409,7 @@ export class YoutubeService {
     return dataInsert;
   }
 
-  async videoTrending(){
+  async videoTrending() {
     const list = await this.youtubeModel.aggregate([
       {
         $match: {
@@ -430,7 +430,7 @@ export class YoutubeService {
     });
   }
 
-  async noCopyRightSounds(){
+  async noCopyRightSounds() {
     const list = await this.youtubeModel.aggregate([
       {
         $match: {
@@ -441,6 +441,22 @@ export class YoutubeService {
         $sample: { size: 20 }, // Lấy ngẫu nhiên 20 bản ghi
       },
     ]);
+
+    return list.map((item) => {
+      const itemSet: any = item;
+      itemSet.thumbnail = itemSet.thumbnails
+        ? itemSet.thumbnails[itemSet.thumbnails.length - 1].url
+        : '';
+      return itemSet;
+    });
+  }
+
+  async findVideoByIds(ids: string[]) {
+    const list = await this.youtubeModel.find({
+      video_id: {
+        $in: ids,
+      },
+    });
 
     return list.map((item) => {
       const itemSet: any = item;

@@ -1,12 +1,12 @@
 import {
   Body,
   Controller,
-  Delete, Get,
+  Delete,
+  Get,
   Param,
   Post,
-  Query,
-  UseGuards
-} from "@nestjs/common";
+  UseGuards,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from '../../decorators/user.decorator';
 import { JwtAuthGuard } from '../../guards/auth.guard';
@@ -16,11 +16,16 @@ import { JwtAuthGuard } from '../../guards/auth.guard';
 export class UserController {
   constructor(private userService: UserService) {}
 
+
+  @Get('/playlist/:id/videos')
+  async videoInList(@Param('id') id: string) {
+    return await this.userService.videoInList(id);
+  }
+
   @Get('/playlist')
   async playList(@User() { user_oid }: any) {
     return await this.userService.myPlayList(user_oid);
   }
-
 
   @Post('/playlist')
   async createPlayList(@Body() data: any, @User() { user_oid }: any) {

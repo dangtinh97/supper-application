@@ -7,6 +7,7 @@ import {
 import { UserService } from './user.service';
 import { VideoPlaylist, VideoPlaylistSchema } from "./schemas/video-playlist.schema";
 import { UserController } from "./user.controller";
+import { YoutubeModule } from "../youtube/youtube.module";
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { UserController } from "./user.controller";
         schema: VideoPlaylistSchema,
       },
     ]),
+    YoutubeModule,
   ],
   providers: [UserService],
   exports: [UserService],

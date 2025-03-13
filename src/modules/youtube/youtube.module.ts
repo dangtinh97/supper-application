@@ -20,5 +20,6 @@ import { RecentlyVideo, RecentlyVideoSchema } from './schemas/recently_video';
   ],
   controllers: [YoutubeController],
   providers: [YoutubeService],
+  exports: [YoutubeService],
 })
 export class YoutubeModule {}
