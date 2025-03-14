@@ -99,6 +99,12 @@ export class UserService {
         user_oid: new ObjectId(userOid),
       })
       .sort({ updated_at: -1 });
+
+    if (list.length == 0) {
+      await this.createPlayList(userOid, 'Video xem sau');
+      return await this.myPlayList(userOid);
+    }
+
     return list.map((item) => {
       return {
         id: item._id.toString(),
