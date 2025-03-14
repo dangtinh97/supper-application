@@ -4,6 +4,10 @@ import { YoutubeService } from './youtube.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Youtube, YoutubeSchema } from './schemas/youtube.schema';
 import { RecentlyVideo, RecentlyVideoSchema } from './schemas/recently_video';
+import {
+  SearchKeyword,
+  SearchKeywordSchema,
+} from './schemas/search-keyword.schema';
 
 @Module({
   imports: [
@@ -15,6 +19,10 @@ import { RecentlyVideo, RecentlyVideoSchema } from './schemas/recently_video';
       {
         name: RecentlyVideo.name,
         schema: RecentlyVideoSchema,
+      },
+      {
+        name: SearchKeyword.name,
+        schema: SearchKeywordSchema,
       },
     ]),
   ],

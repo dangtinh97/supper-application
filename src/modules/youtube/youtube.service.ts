@@ -4,8 +4,48 @@ import { Youtube } from './schemas/youtube.schema';
 import { Model, Types } from 'mongoose';
 import { RecentlyVideo } from './schemas/recently_video';
 import { ObjectId } from 'mongodb';
+import { SearchKeyword } from './schemas/search-keyword.schema';
 
 const _ = require('lodash');
+
+export const badWords = [
+  'damn',
+  'hell',
+  'shit',
+  'fuck',
+  'bitch',
+  'bastard',
+  'asshole',
+  'dick',
+  'piss',
+  'crap',
+  'slut',
+  'prick',
+  'cunt',
+  'motherfucker',
+  'screw',
+  'whore',
+  'cock',
+  'douche',
+  'sex',
+  'địt',
+  'cặc',
+  'lồn',
+  'đéo',
+  'mẹ mày',
+  'chó',
+  'đụ',
+  'mẹ kiếp',
+  'bà nội mày',
+  'mả mẹ',
+  'đéo hiểu',
+  'bố láo',
+  'con mẹ nó',
+  'khốn nạn',
+  'ngu',
+  'thằng khốn',
+  'mày',
+];
 
 @Injectable()
 export class YoutubeService {
@@ -14,6 +54,8 @@ export class YoutubeService {
     private readonly youtubeModel: Model<Youtube>,
     @InjectModel(RecentlyVideo.name)
     private readonly recentlyVideoModel: Model<RecentlyVideo>,
+    @InjectModel(SearchKeyword.name)
+    private readonly searchKeywordModel: Model<SearchKeyword>,
   ) {}
 
   async getVideo(videoId: string) {
@@ -21,17 +63,52 @@ export class YoutubeService {
   }
 
   async suggest(query: string) {
+    query = this.removeBadWord(query);
+
+    if (query === 'TRENDING_FIND') {
+      const findKeys = await this.searchKeywordModel.aggregate([
+        {
+          $sort: {
+            count: -1,
+            updated_at: -1,
+          },
+        },
+        {
+          $limit: 20,
+        },
+      ]);
+
+      return findKeys.map((item) => {
+        return item.keyword;
+      });
+    }
+
     const time = Math.round(new Date().getTime() / 1000);
     const url = `https://suggestqueries.google.com/complete/search?json=suggestCallBack&q=${encodeURIComponent(query)}&hl=vi&ds=yt&client=youtube&_=${time}`;
-    console.log(url);
     const curl = await fetch(url, {
       headers: this.headerCurl(),
       method: 'GET',
     });
-
     const body = await curl.text();
-    // return body;
+
     return this.parseDataSuggest(body);
+  }
+
+  removeBadWord(text: string) {
+    if (!text) {
+      return '';
+    }
+    try {
+      badWords.sort((a, b) => b.length - a.length);
+      badWords.forEach((item) => {
+        const regex = new RegExp(`(^|\\s)${item}($|\\s)`, 'gi');
+        text = text.replace(regex, ' ');
+      });
+      text = text.replace(/ {2}/g, ' ');
+      return text.trim();
+    } catch (e) {
+      return text;
+    }
   }
 
   headerCurl(): any {
@@ -58,6 +135,7 @@ export class YoutubeService {
   }
 
   async findVideoByKeyWord(keyword: string) {
+    keyword = this.removeBadWord(keyword).trim();
     const body = {
       context: {
         client: {
@@ -99,7 +177,21 @@ export class YoutubeService {
       },
       query: keyword,
     };
-
+    await this.searchKeywordModel
+      .findOneAndUpdate(
+        {
+          keyword: keyword.toLowerCase(),
+        },
+        {
+          $inc: {
+            count: 1,
+          },
+        },
+        {
+          upsert: true,
+        },
+      )
+      .exec();
     const curl = await fetch(
       'https://www.youtube.com/youtubei/v1/search?prettyPrint=false',
       {
