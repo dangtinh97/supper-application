@@ -78,8 +78,9 @@ export class UserService {
         returnDocument: 'after',
       },
     );
+    console.log(update);
     return {
-      id: update._id.toString(),
+      id: id,
       name: update.name,
       track: update.video_ids.length,
     };

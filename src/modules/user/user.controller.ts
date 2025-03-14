@@ -4,9 +4,9 @@ import {
   Delete,
   Get,
   Param,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+  Post, Query,
+  UseGuards
+} from "@nestjs/common";
 import { UserService } from './user.service';
 import { User } from '../../decorators/user.decorator';
 import { JwtAuthGuard } from '../../guards/auth.guard';
@@ -43,8 +43,7 @@ export class UserController {
   }
 
   @Delete('/playlist/:id/track')
-  async deleteFromTrack(@Body() data: any, @Param('id') id: string) {
-    const videoId = data['video_id'] ?? 'No Name';
+  async deleteFromTrack(@Query('video-id') videoId: string, @Param('id') id: string) {
     return await this.userService.deleteTrack(id, videoId);
   }
 
