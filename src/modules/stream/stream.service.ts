@@ -10,10 +10,8 @@ export class StreamService {
     private linkStreamModel: Model<LinkStream>,
   ) {}
 
-  async getVieOn() {
-    const list = await this.linkStreamModel.find({
-      type: 'VIEON',
-    });
+  async getVieOn(cond: any) {
+    const list = await this.linkStreamModel.find(cond);
     return list.map((item: any) => {
       return {
         id: item._id.toString(),

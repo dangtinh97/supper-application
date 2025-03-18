@@ -1,14 +1,13 @@
-import { Controller, Get, Req, Res, UseGuards } from "@nestjs/common";
-import { JwtAuthGuard } from "../../guards/auth.guard";
-import { User } from "../../decorators/user.decorator";
-import { StreamService } from "./stream.service";
+import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../../guards/auth.guard';
+import { User } from '../../decorators/user.decorator';
+import { StreamService } from './stream.service';
+import { ObjectId } from 'mongodb';
 
 @Controller('/streams')
 @UseGuards(JwtAuthGuard)
 export class StreamController {
-  constructor(
-    private readonly service: StreamService
-  ) {}
+  constructor(private readonly service: StreamService) {}
 
   @Get('/')
   async getStream(@Req() req, @Res() res) {
@@ -19,9 +18,14 @@ export class StreamController {
   }
 
   @Get('/history')
-  async historyStream(
-    @User() { user_oid }: any
-  ) {
-    return this.service.getVieOn();
+  async historyStream(@User() { user_oid }: any) {
+    const playFirst = await this.service.getVieOn({
+      type: 'VIEON',
+    });
+    const userHistory = await this.service.getVieOn({
+      user_oid: new ObjectId(user_oid),
+    });
+
+    return playFirst.concat(...userHistory);
   }
 }
