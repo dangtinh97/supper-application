@@ -1,6 +1,26 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { LinkStream } from './schemas/link-stream.schema';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class StreamService {
-  constructor () {}
+  constructor(
+    @InjectModel(LinkStream.name)
+    private linkStreamModel: Model<LinkStream>,
+  ) {}
+
+  async getVieOn() {
+    const list = await this.linkStreamModel.find({
+      type: 'VIEON',
+    });
+    return list.map((item: any) => {
+      return {
+        id: item._id.toString(),
+        type: item.type,
+        name: item.name,
+        url: item.url,
+      };
+    });
+  }
 }
