@@ -11,7 +11,7 @@ export class LinkStream {
   user_oid: mongoose.Types.ObjectId;
 
   @Prop()
-  link: string;
+  url: string;
 
   @Prop()
   name: string;
