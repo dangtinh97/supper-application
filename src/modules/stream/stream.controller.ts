@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
   Post,
   Req,
   Res,
@@ -34,11 +36,17 @@ export class StreamController {
       user_oid: new ObjectId(user_oid),
     });
 
-    return playFirst.concat(...userHistory);
+    return playFirst.concat(...userHistory.reverse());
   }
 
   @Post('/')
   async saveStreamLink(@User() { user_oid }: any, @Body('url') url: string) {
     return await this.service.save(user_oid, url);
+  }
+
+  @Delete('/history/:id')
+  async deleteStreamMe(@User() { user_oid }: any, @Param('id') id: string) {
+    await this.service.delete(user_oid, id);
+    return {};
   }
 }

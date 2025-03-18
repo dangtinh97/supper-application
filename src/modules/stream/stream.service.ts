@@ -23,6 +23,14 @@ export class StreamService {
     });
   }
 
+  async delete(userOid: string, id: string){
+    await this.linkStreamModel.deleteOne({
+      user_oid: new ObjectId(userOid),
+      _id: new ObjectId(id)
+    })
+    return {}
+  }
+
   async save(userOid: string, url: string) {
     return await this.linkStreamModel.create({
       type: 'URL_OF_USER',
