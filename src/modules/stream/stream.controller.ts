@@ -1,4 +1,12 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../../guards/auth.guard';
 import { User } from '../../decorators/user.decorator';
 import { StreamService } from './stream.service';
@@ -27,5 +35,10 @@ export class StreamController {
     });
 
     return playFirst.concat(...userHistory);
+  }
+
+  @Post('/')
+  async saveStreamLink(@User() { user_oid }: any, @Body('url') url: string) {
+    return await this.service.save(user_oid, url);
   }
 }
