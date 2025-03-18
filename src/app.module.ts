@@ -20,6 +20,7 @@ import { SettingModule } from "./share_modules/setting/setting.module";
 import { HeaderMiddleware } from "./middlewares/header.middleware";
 import { GatewayModule } from "./modules/gateway/gateway.module";
 import { UserModule } from "./modules/user/user.module";
+import { StreamModule } from "./modules/stream/stream.module";
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { UserModule } from "./modules/user/user.module";
     SettingModule,
     GatewayModule,
     UserModule,
+    StreamModule,
   ],
   controllers: [AppController],
   providers: [AppService, TaskService, JwtService, ConfigService, JwtStrategy],
