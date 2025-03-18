@@ -28,15 +28,22 @@ export class StreamController {
   }
 
   @Get('/history')
-  async historyStream(@User() { user_oid }: any) {
-    const playFirst = await this.service.getVieOn({
-      type: 'VIEON',
-    });
+  async historyStream(@Req() req: Request, @User() { user_oid }: any) {
+    let playFirst = [];
+    if (!this.isReview(req)) {
+      playFirst = await this.service.getVieOn({
+        type: 'VIEON',
+      });
+    }
     const userHistory = await this.service.getVieOn({
       user_oid: new ObjectId(user_oid),
     });
 
     return playFirst.concat(...userHistory.reverse());
+  }
+
+  isReview(req: Request) {
+    return req.headers['app-review'] === 'true';
   }
 
   @Post('/')
