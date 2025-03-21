@@ -1,12 +1,12 @@
 import {
   Body,
   Controller,
-  Get,
+  Get, Param,
   Post,
   Query,
   Req,
-  UseGuards,
-} from '@nestjs/common';
+  UseGuards
+} from "@nestjs/common";
 import { YoutubeService } from './youtube.service';
 import { JwtAuthGuard } from '../../guards/auth.guard';
 import { User } from '../../decorators/user.decorator';
@@ -101,11 +101,11 @@ export class YoutubeController {
 
   @Post('/short-next')
   async shortNext(@Req() request: any, @Body() body: any) {
-    if(this.isReview(request)){
-      return this.service.noCopyRightSounds()
+    if (this.isReview(request)) {
+      return this.service.noCopyRightSounds();
     }
     const data = JSON.parse(body['data'])['entries'];
-    return data.map((item:any) => {
+    return data.map((item: any) => {
       return {
         video_id: _.get(item, 'command.reelWatchEndpoint.videoId'),
         thumbnail: _.get(
@@ -123,5 +123,10 @@ export class YoutubeController {
         },
       };
     });
+  }
+
+  @Post('/video')
+  async addInfoVideoById(@Body('data') data: string) {
+    return await this.service.addVideoInfo(JSON.parse(data));
   }
 }

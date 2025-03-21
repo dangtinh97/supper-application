@@ -558,4 +558,65 @@ export class YoutubeService {
       return itemSet;
     });
   }
+
+  async addVideoInfo(data: any) {
+    const videoId = _.get(data, 'currentVideoEndpoint.watchEndpoint.videoId');
+
+    const find: any = await this.youtubeModel.findOne({
+      video_id: videoId,
+    });
+    if (find) {
+      find.thumbnail = find.thumbnails
+        ? find.thumbnails[find.thumbnails.length - 1].url
+        : '';
+      return find;
+    }
+
+    const title = _.get(
+      data,
+      'contents.twoColumnWatchNextResults.results.results.contents.0.videoPrimaryInfoRenderer.title.runs.0.text',
+    );
+    const duration = _.get(data, 'contents.lengthSeconds');
+    let view = _.get(
+      data,
+      'contents.twoColumnWatchNextResults.results.results.contents.0.videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer.viewCount.simpleText',
+      '',
+    );
+    view = view.replace(/\D/g, '');
+    //15.649.271
+    const create = {
+      video_id: videoId,
+      thumbnails: [],
+      title: title,
+      duration: 0,
+      view_of_ytb: parseInt(view),
+      channel: {
+        name: _.get(
+          data,
+          'contents.twoColumnWatchNextResults.results.results.contents.1.videoSecondaryInfoRenderer.owner.videoOwnerRenderer.title.runs.0.text',
+          '',
+        ),
+        channel_id: _.get(
+          data,
+          'contents.twoColumnWatchNextResults.results.results.contents.1.videoSecondaryInfoRenderer.owner.videoOwnerRenderer.title.runs.0.navigationEndpoint.browseEndpoint.canonicalBaseUrl',
+          '',
+        ),
+        browser_id: _.get(
+          data,
+          'contents.twoColumnWatchNextResults.results.results.contents.1.videoSecondaryInfoRenderer.owner.videoOwnerRenderer.title.runs.0.navigationEndpoint.browseEndpoint.browseId',
+          '',
+        ),
+        thumbnail: _.get(
+          data,
+          'contents.twoColumnWatchNextResults.results.results.contents.1.videoSecondaryInfoRenderer.owner.videoOwnerRenderer.thumbnail.thumbnails.0.url',
+          '',
+        ),
+      },
+    };
+    const insert: any = await this.youtubeModel.create(create);
+    insert.thumbnail = insert.thumbnails
+      ? find.thumbnails[insert.thumbnails.length - 1].url
+      : '';
+    return insert;
+  }
 }
