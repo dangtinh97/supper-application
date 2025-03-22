@@ -581,11 +581,15 @@ export class YoutubeService {
       'contents.twoColumnWatchNextResults.results.results.contents.0.videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer.viewCount.simpleText',
       '',
     );
-    view = view.replace(/\D/g, '');
-    //15.649.271
     const create = {
       video_id: videoId,
-      thumbnails: [],
+      thumbnails: [
+        {
+          url: `https://img.youtube.com/vi/${videoId}/sddefault.jpg`,
+          width: 336,
+          height: 188,
+        },
+      ],
       title: title,
       duration: 0,
       view_of_ytb: 0,
