@@ -25,6 +25,12 @@ export class DrumtifyUser extends BaseModel {
 
   @Prop()
   app_version: string;
+
+  @Prop()
+  count_load_ad: number;
+
+  @Prop()
+  time_load_ad: Date;
 }
 
 export const DrumtifyUserSchema = SchemaFactory.createForClass(DrumtifyUser);

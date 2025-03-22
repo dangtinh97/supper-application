@@ -5,6 +5,7 @@ import { DrumtifyAuthController } from './drumtify-auth.controller';
 import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { SettingModule } from "../../share_modules/setting/setting.module";
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       },
       inject: [ConfigService],
     }),
+    SettingModule,
   ],
   controllers: [DrumtifyAuthController],
   providers: [AuthService],
