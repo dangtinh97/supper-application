@@ -561,17 +561,16 @@ export class YoutubeService {
 
   async addVideoInfo(data: any) {
     const videoId = _.get(data, 'currentVideoEndpoint.watchEndpoint.videoId');
-
     const find: any = await this.youtubeModel.findOne({
       video_id: videoId,
     });
     if (find) {
-      find.thumbnail = find.thumbnails
-        ? find.thumbnails[find.thumbnails.length - 1].url
-        : '';
+      find.thumbnail =
+        find.thumbnails.length > 0
+          ? find.thumbnails[find.thumbnails.length - 1].url
+          : '';
       return find;
     }
-
     const title = _.get(
       data,
       'contents.twoColumnWatchNextResults.results.results.contents.0.videoPrimaryInfoRenderer.title.runs.0.text',
@@ -589,7 +588,7 @@ export class YoutubeService {
       thumbnails: [],
       title: title,
       duration: 0,
-      view_of_ytb: parseInt(view),
+      view_of_ytb: 0,
       channel: {
         name: _.get(
           data,
@@ -614,9 +613,10 @@ export class YoutubeService {
       },
     };
     const insert: any = await this.youtubeModel.create(create);
-    insert.thumbnail = insert.thumbnails
-      ? find.thumbnails[insert.thumbnails.length - 1].url
-      : '';
+    insert.thumbnail =
+      insert.thumbnails.length > 0
+        ? find.thumbnails[insert.thumbnails.length - 1].url
+        : '';
     return insert;
   }
 }
