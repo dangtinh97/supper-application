@@ -600,10 +600,7 @@ export class YoutubeService {
       },
     };
     const insert: any = await this.youtubeModel.create(create);
-    insert.thumbnail =
-      insert.thumbnails.length > 0
-        ? find.thumbnails[insert.thumbnails.length - 1].url
-        : '';
+    insert.thumbnail = `https://img.youtube.com/vi/${videoId}/sddefault.jpg`;
     return insert;
   }
 }
