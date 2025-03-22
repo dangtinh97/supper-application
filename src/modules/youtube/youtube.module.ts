@@ -8,6 +8,7 @@ import {
   SearchKeyword,
   SearchKeywordSchema,
 } from './schemas/search-keyword.schema';
+import { VideoPlaylist, VideoPlaylistSchema } from "../user/schemas/video-playlist.schema";
 
 @Module({
   imports: [
@@ -23,6 +24,10 @@ import {
       {
         name: SearchKeyword.name,
         schema: SearchKeywordSchema,
+      },
+      {
+        name: VideoPlaylist.name,
+        schema: VideoPlaylistSchema,
       },
     ]),
   ],

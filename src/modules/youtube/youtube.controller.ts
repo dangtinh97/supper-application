@@ -1,12 +1,13 @@
 import {
   Body,
   Controller,
-  Get, Param,
+  Get,
+  Param,
   Post,
   Query,
   Req,
-  UseGuards
-} from "@nestjs/common";
+  UseGuards,
+} from '@nestjs/common';
 import { YoutubeService } from './youtube.service';
 import { JwtAuthGuard } from '../../guards/auth.guard';
 import { User } from '../../decorators/user.decorator';

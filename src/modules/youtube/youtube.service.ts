@@ -603,4 +603,59 @@ export class YoutubeService {
     insert.thumbnail = `https://img.youtube.com/vi/${videoId}/sddefault.jpg`;
     return insert;
   }
+
+  async videoOfPlayList(data: any) {
+    const dataInsert = data
+      .map((dataItem: any) => {
+        const item = _.get(dataItem, 'playlistVideoRenderer');
+        const videoId = _.get(item, 'videoId');
+        const title = _.get(item, 'title.runs.0.text');
+        const timeText = _.get(item, 'lengthSeconds', '0');
+        const time = parseInt(timeText);
+        return {
+          video_id: videoId,
+          thumbnails: [
+            {
+              url: `https://img.youtube.com/vi/${videoId}/sddefault.jpg`,
+              width: 336,
+              height: 188,
+            },
+          ],
+          title: title,
+          duration: time,
+          view_of_ytb: 0,
+          channel: {
+            name: _.get(item, 'shortBylineText.runs.0.text', ''),
+            channel_id: _.get(
+              item,
+              'shortBylineText.runs.0.navigationEndpoint.browseEndpoint.canonicalBaseUrl',
+              '',
+            ),
+            browser_id: _.get(
+              data,
+              'shortBylineText.runs.0.navigationEndpoint.browseEndpoint.browseId',
+              '',
+            ),
+            thumbnail: _.get(
+              data,
+              'contents.twoColumnWatchNextResults.results.results.contents.1.videoSecondaryInfoRenderer.owner.videoOwnerRenderer.thumbnail.thumbnails.0.url',
+              '',
+            ),
+          },
+        };
+      })
+      .filter((item: any) => {
+        return item.video_id;
+      });
+    for (const item of dataInsert) {
+      await this.youtubeModel.findOneAndUpdate(
+        {
+          video_id: item.video_id,
+        },
+        { ...item },
+        { upsert: true },
+      );
+    }
+    return dataInsert.map((item) => item.video_id);
+  }
 }
