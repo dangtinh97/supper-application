@@ -363,9 +363,7 @@ export class YoutubeService {
           return null;
         }
         const itemSet: any = item.video[0];
-        itemSet.thumbnail = itemSet.thumbnails
-          ? itemSet.thumbnails[itemSet.thumbnails.length - 1].url
-          : '';
+        itemSet.thumbnail = `https://img.youtube.com/vi/${itemSet.video_id}/sddefault.jpg`;
         return itemSet;
       })
       .filter((item) => {
@@ -515,9 +513,7 @@ export class YoutubeService {
 
     return list.map((item) => {
       const itemSet: any = item;
-      itemSet.thumbnail = itemSet.thumbnails
-        ? itemSet.thumbnails[itemSet.thumbnails.length - 1].url
-        : '';
+      itemSet.thumbnail = `https://img.youtube.com/vi/${item.video_id}/sddefault.jpg`;
       return itemSet;
     });
   }
@@ -536,9 +532,7 @@ export class YoutubeService {
 
     return list.map((item) => {
       const itemSet: any = item;
-      itemSet.thumbnail = itemSet.thumbnails
-        ? itemSet.thumbnails[itemSet.thumbnails.length - 1].url
-        : '';
+      itemSet.thumbnail = `https://img.youtube.com/vi/${item.video_id}/sddefault.jpg`;
       return itemSet;
     });
   }
@@ -552,9 +546,7 @@ export class YoutubeService {
 
     return list.map((item) => {
       const itemSet: any = item;
-      itemSet.thumbnail = itemSet.thumbnails
-        ? itemSet.thumbnails[itemSet.thumbnails.length - 1].url
-        : '';
+      itemSet.thumbnail = `https://img.youtube.com/vi/${item.video_id}/sddefault.jpg`;
       return itemSet;
     });
   }
@@ -565,21 +557,12 @@ export class YoutubeService {
       video_id: videoId,
     });
     if (find) {
-      find.thumbnail =
-        find.thumbnails.length > 0
-          ? find.thumbnails[find.thumbnails.length - 1].url
-          : '';
+      find.thumbnail = `https://img.youtube.com/vi/${videoId}/sddefault.jpg`;
       return find;
     }
     const title = _.get(
       data,
       'contents.twoColumnWatchNextResults.results.results.contents.0.videoPrimaryInfoRenderer.title.runs.0.text',
-    );
-    const duration = _.get(data, 'contents.lengthSeconds');
-    let view = _.get(
-      data,
-      'contents.twoColumnWatchNextResults.results.results.contents.0.videoPrimaryInfoRenderer.viewCount.videoViewCountRenderer.viewCount.simpleText',
-      '',
     );
     const create = {
       video_id: videoId,
