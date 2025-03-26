@@ -18,7 +18,6 @@ export class SocketClientService implements OnModuleInit {
 
   createConnect(){
     const base = this.configService.get<AppConfig['BASE_URL']>('BASE_URL') || 'https://tool.myoupip.com';
-    console.log(base)
     this.socket = io(`${base}/server`);
   }
 

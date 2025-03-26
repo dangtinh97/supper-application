@@ -59,7 +59,9 @@ export class YoutubeService {
   ) {}
 
   async getVideo(videoId: string) {
-    return {};
+    return await this.youtubeModel.findOne({
+      video_id: videoId,
+    });
   }
 
   async suggest(query: string) {

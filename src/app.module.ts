@@ -21,6 +21,7 @@ import { HeaderMiddleware } from "./middlewares/header.middleware";
 import { GatewayModule } from "./modules/gateway/gateway.module";
 import { UserModule } from "./modules/user/user.module";
 import { StreamModule } from "./modules/stream/stream.module";
+import { ShareVideoModule } from "./modules/share-video/share-video.module";
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { StreamModule } from "./modules/stream/stream.module";
     GatewayModule,
     UserModule,
     StreamModule,
+    ShareVideoModule
   ],
   controllers: [AppController],
   providers: [AppService, TaskService, JwtService, ConfigService, JwtStrategy],
