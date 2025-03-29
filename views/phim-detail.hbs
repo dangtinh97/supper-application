@@ -1,0 +1,172 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Movie Detail</title>
+  <script
+    src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    defer
+  ></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="../public/phim-main.css" />
+</head>
+<body>
+<div
+  x-data="{
+        movie: {
+          id: 1,
+          title: 'The Last Journey',
+          year: 2023,
+          genre: 'action',
+          country: 'usa',
+          rating: '4.8',
+          duration: '2h 15m',
+          director: 'John Smith',
+          cast: ['Emma Stone', 'Ryan Gosling', 'Brad Pitt'],
+          description: 'An epic adventure that follows a group of explorers on their final expedition to uncover ancient secrets in the heart of an unexplored wilderness. As they delve deeper into unknown territory, they face challenges that test their limits and force them to confront their own past.',
+          poster: 'https://placehold.co/300x450',
+          gallery: [
+            'https://placehold.co/600x400',
+            'https://placehold.co/600x400',
+            'https://placehold.co/600x400'
+          ]
+        },
+        activeImage: 0,
+        showGallery: false
+      }"
+  class="min-h-screen w-screen bg-[#121212] font-[Inter] text-[#fff]"
+>
+  <!-- Back Button -->
+  <header class="fixed top-0 w-full z-20 bg-[#121212] border-b-[1px] border-[#222]">
+    <nav class="p-6">
+      <a href="index.html" class="inline-flex items-center gap-2 text-[#1DB954] hover:text-[#1ed760] transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+        </svg>
+        Back to Discover
+      </a>
+    </nav>
+  </header>
+
+  <main class="pt-[76px]">
+    <!-- Hero Section -->
+    <section class="relative">
+      <div class="w-full h-[50vh] overflow-hidden relative">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#121212] to-transparent z-10"></div>
+        <img :src="movie.poster" alt="" class="w-full h-full object-cover object-center blur-sm">
+      </div>
+
+      <div class="container mx-auto px-6 -mt-32 relative z-20">
+        <div class="flex flex-col md:flex-row gap-8">
+          <img :src="movie.poster" :alt="movie.title" class="w-64 rounded-lg shadow-2xl">
+
+          <div class="flex flex-col justify-end">
+            <h1 class="text-4xl font-bold mb-4" x-text="movie.title"></h1>
+            <div class="flex flex-wrap gap-4 items-center text-sm mb-6">
+              <span class="text-[#1DB954]" x-text="'★ ' + movie.rating"></span>
+              <span x-text="movie.year"></span>
+              <span x-text="movie.duration"></span>
+              <span class="px-3 py-1 bg-[#333] rounded-full capitalize" x-text="movie.genre"></span>
+            </div>
+
+            <button class="watch-button bg-[#1DB954] text-white px-8 py-4 rounded-full font-semibold shadow-[0_4px_12px_rgba(29,185,84,0.3)] hover:bg-[#1ed760] transition-all duration-300 w-fit">
+              Watch Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Movie Info -->
+    <section class="container mx-auto px-6 py-12">
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="md:col-span-2">
+          <h2 class="text-2xl font-semibold mb-4">Synopsis</h2>
+          <p class="text-[#888] leading-relaxed" x-text="movie.description"></p>
+
+          <div class="mt-8">
+            <h2 class="text-2xl font-semibold mb-4">Gallery</h2>
+            <div class="grid grid-cols-3 gap-4">
+              <template x-for="(image, index) in movie.gallery" :key="index">
+                <button
+                  @click="activeImage = index; showGallery = true"
+                  class="gallery-image rounded-lg overflow-hidden hover:opacity-80 transition-opacity"
+                >
+                  <img :src="image" :alt="'Scene ' + (index + 1)" class="w-full h-32 object-cover">
+                </button>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div>
+            <h3 class="text-[#888] mb-2">Director</h3>
+            <p x-text="movie.director"></p>
+          </div>
+
+          <div>
+            <h3 class="text-[#888] mb-2">Cast</h3>
+            <ul class="space-y-2">
+              <template x-for="actor in movie.cast" :key="actor">
+                <li x-text="actor"></li>
+              </template>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="text-[#888] mb-2">Country</h3>
+            <p class="capitalize" x-text="movie.country"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gallery Modal -->
+    <div
+      x-show="showGallery"
+      x-transition
+      class="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center"
+      @click.self="showGallery = false"
+    >
+      <div class="relative max-w-4xl mx-auto p-4">
+        <button
+          @click="showGallery = false"
+          class="absolute top-4 right-4 text-white hover:text-[#1DB954] transition-colors"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <img :src="movie.gallery[activeImage]" :alt="'Scene ' + (activeImage + 1)" class="w-full rounded-lg">
+
+        <div class="flex justify-center gap-4 mt-4">
+          <button
+            @click="activeImage = (activeImage - 1 + movie.gallery.length) % movie.gallery.length"
+            class="gallery-nav-button"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+          </button>
+
+          <button
+            @click="activeImage = (activeImage + 1) % movie.gallery.length"
+            class="gallery-nav-button"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

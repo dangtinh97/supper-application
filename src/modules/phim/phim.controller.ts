@@ -1,4 +1,4 @@
-import { Controller, Get, Render } from '@nestjs/common';
+import { Controller, Get, Param, Render } from "@nestjs/common";
 import { dataHome } from 'src/data/home';
 
 @Controller('/phim')
@@ -22,8 +22,8 @@ export class PhimController {
             title: item.name,
             year: item.year,
             genre: '',
-            country: '',
-            rating: '4.8',
+            country: item.country[0].name,
+            language: item.lang,
             poster: item.poster_url,
             categories: item.category.map((item) => item.name),
             slug: item.slug,
@@ -34,5 +34,11 @@ export class PhimController {
     console.log(JSON.stringify(data.x_data.movies));
     // console.log(JSON.stringify(data));
     return data;
+  }
+
+  @Get('/detail/:slug')
+  @Render('phim-detail')
+  async detail(@Param('slug') slug: string) {
+    return {};
   }
 }
