@@ -1,5 +1,5 @@
-import { Controller, Get, Param, Render } from "@nestjs/common";
-import { dataHome } from 'src/data/home';
+import { Controller, Get, Param, Render } from '@nestjs/common';
+import { dataHome, dataDetail } from 'src/data/home';
 
 @Controller('/phim')
 export class PhimController {
@@ -39,6 +39,20 @@ export class PhimController {
   @Get('/detail/:slug')
   @Render('phim-detail')
   async detail(@Param('slug') slug: string) {
-    return {};
+    return {
+      id: 1,
+      title: dataDetail.movie.name,
+      year: dataDetail.movie.year ?? '',
+      genre: dataDetail.movie.lang,
+      country: dataDetail.movie.country[0].name,
+      rating: dataDetail.movie.tmdb.vote_average,
+      duration: dataDetail.movie.time,
+      director: dataDetail.movie.director,
+      cast: dataDetail.movie.actor ?? [],
+      description: dataDetail.movie.content,
+      poster: dataDetail.movie.poster_url,
+      thumb: dataDetail.movie.thumb_url,
+      gallery: [],
+    };
   }
 }
