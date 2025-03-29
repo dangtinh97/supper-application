@@ -10,7 +10,7 @@ import { HeaderInterceptor } from './interceptors/header.interceptor';
 import { SettingService } from './share_modules/setting/setting.service';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
-
+import * as hbs from 'hbs';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const logger = new Logger('MAIN', {
@@ -28,6 +28,9 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views')); // Thư mục chứa file HTML
   app.setViewEngine('hbs'); // Sử dụng Handlebars
+  hbs.registerHelper('json', function (context) {
+    return JSON.stringify(context);
+  });
   const configService = app.get(ConfigService);
   const port = configService.get<AppConfig['APP_PORT']>('APP_PORT')!;
   logger.log(`Server is running on port ${port}`);

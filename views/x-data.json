@@ -1,0 +1,39 @@
+{
+  selectedGenre: 'all',
+  selectedCountry: 'all',
+  showFilters: false,
+  currentPage: 1,
+  itemsPerPage: 8,
+  movies: [
+    {id: 1, title: 'The Last Journey', year: 2023, genre: 'action', country: 'usa', rating: '4.8', poster: 'https://placehold.co/300x450'},
+    {id: 2, title: 'Midnight Tales', year: 2023, genre: 'horror', country: 'korea', rating: '4.6', poster: 'https://placehold.co/300x450'},
+    {id: 3, title: 'Summer Dreams', year: 2023, genre: 'comedy', country: 'japan', rating: '4.9', poster: 'https://placehold.co/300x450'},
+    {id: 4, title: 'Dragon Warriors', year: 2023, genre: 'animation', country: 'vietnam', rating: '4.7', poster: 'https://placehold.co/300x450'},
+    {id: 5, title: 'City Lights', year: 2023, genre: 'drama', country: 'usa', rating: '4.5', poster: 'https://placehold.co/300x450'}
+  ],
+  filteredMovies() {
+  return this.movies.filter(movie =>
+  (this.selectedGenre === 'all' || movie.genre === this.selectedGenre) &&
+  (this.selectedCountry === 'all' || movie.country === this.selectedCountry)
+  );
+},
+paginatedMovies() {
+const filtered = this.filteredMovies();
+const start = (this.currentPage - 1) * this.itemsPerPage;
+const end = start + this.itemsPerPage;
+return filtered.slice(start, end);
+},
+totalPages() {
+return Math.ceil(this.filteredMovies().length / this.itemsPerPage);
+},
+nextPage() {
+if (this.currentPage < this.totalPages()) {
+this.currentPage++;
+}
+},
+prevPage() {
+if (this.currentPage > 1) {
+this.currentPage--;
+}
+}
+}

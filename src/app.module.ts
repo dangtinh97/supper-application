@@ -22,6 +22,7 @@ import { GatewayModule } from "./modules/gateway/gateway.module";
 import { UserModule } from "./modules/user/user.module";
 import { StreamModule } from "./modules/stream/stream.module";
 import { ShareVideoModule } from "./modules/share-video/share-video.module";
+import { PhimModule } from "./modules/phim/phim.module";
 
 @Module({
   imports: [
@@ -67,7 +68,8 @@ import { ShareVideoModule } from "./modules/share-video/share-video.module";
     GatewayModule,
     UserModule,
     StreamModule,
-    ShareVideoModule
+    ShareVideoModule,
+    PhimModule,
   ],
   controllers: [AppController],
   providers: [AppService, TaskService, JwtService, ConfigService, JwtStrategy],

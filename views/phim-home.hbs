@@ -12,49 +12,42 @@
     href="https://fonts.googleapis.com/css2?family=Inter&display=swap"
     rel="stylesheet"
   />
-  <link rel="stylesheet" href="../public/phim-main.css" />
+  <link rel="stylesheet" href="phim-main.css" />
 </head>
 <body>
 <div
   x-data="{
-            selectedGenre: 'all',
-            selectedCountry: 'all',
-            showFilters: false,
-            currentPage: 1,
-            itemsPerPage: 8,
-            movies: [
-                {id: 1, title: 'The Last Journey', year: 2023, genre: 'action', country: 'usa', rating: '4.8', poster: 'https://placehold.co/300x450'},
-                {id: 2, title: 'Midnight Tales', year: 2023, genre: 'horror', country: 'korea', rating: '4.6', poster: 'https://placehold.co/300x450'},
-                {id: 3, title: 'Summer Dreams', year: 2023, genre: 'comedy', country: 'japan', rating: '4.9', poster: 'https://placehold.co/300x450'},
-                {id: 4, title: 'Dragon Warriors', year: 2023, genre: 'animation', country: 'vietnam', rating: '4.7', poster: 'https://placehold.co/300x450'},
-                {id: 5, title: 'City Lights', year: 2023, genre: 'drama', country: 'usa', rating: '4.5', poster: 'https://placehold.co/300x450'}
-            ],
-            filteredMovies() {
-                return this.movies.filter(movie =>
-                    (this.selectedGenre === 'all' || movie.genre === this.selectedGenre) &&
-                    (this.selectedCountry === 'all' || movie.country === this.selectedCountry)
-                );
-            },
-            paginatedMovies() {
-                const filtered = this.filteredMovies();
-                const start = (this.currentPage - 1) * this.itemsPerPage;
-                const end = start + this.itemsPerPage;
-                return filtered.slice(start, end);
-            },
-            totalPages() {
-                return Math.ceil(this.filteredMovies().length / this.itemsPerPage);
-            },
-            nextPage() {
-                if (this.currentPage < this.totalPages()) {
-                    this.currentPage++;
-                }
-            },
-            prevPage() {
-                if (this.currentPage > 1) {
-                    this.currentPage--;
-                }
-            }
-        }"
+                      selectedGenre: 'all',
+                      selectedCountry: 'all',
+                      showFilters: false,
+                      currentPage: {{data.x_data.currentPage}},
+                      itemsPerPage: {{data.x_data.itemsPerPage}},
+                      movies: {{json data.x_data.movies}},
+                      filteredMovies() {
+                          return this.movies
+                      },
+                      paginatedMovies() {
+                          const filtered = this.filteredMovies();
+                          const start = (this.currentPage - 1) * this.itemsPerPage;
+                          const end = start + this.itemsPerPage;
+                          return filtered.slice(start, end);
+                      },
+                      totalPages() {
+                          return Math.ceil(this.filteredMovies().length / this.itemsPerPage);
+                      },
+                      nextPage() {
+                          if (this.currentPage < this.totalPages()) {
+                              this.currentPage++;
+                          }
+                      },
+                      prevPage() {
+                          if (this.currentPage > 1) {
+                              this.currentPage--;
+                          }
+                      },
+                      searchQuery(){
+                      }
+                  }"
   class="min-h-screen w-screen bg-[#121212] font-[Inter] text-[#fff]"
 >
   <header class="fixed top-0 w-full z-20 bg-[#121212]">
@@ -191,7 +184,8 @@
             class="w-full h-auto object-cover"
           />
           <div class="p-4">
-            <h2 class="text-lg font-semibold" x-text="movie.title"></h2>
+              <a :href="'/phim/detail/' + movie.slug"><h2 class="text-lg font-semibold" x-text="movie.title"></h2></a>
+
             <div class="flex justify-between items-center mt-2">
               <span class="text-sm text-[#888]" x-text="movie.year"></span>
               <span
@@ -201,13 +195,9 @@
             </div>
             <div class="flex gap-2 mt-2">
                   <span
-                    class="text-xs px-2 py-1 bg-[#333] rounded-full"
-                    x-text="movie.genre"
+                    class="text-xs mx-1 my-2 px-2 py-1 bg-[#333] rounded-full"
+                    x-text="movie.categories[0]"
                   ></span>
-              <span
-                class="text-xs px-2 py-1 bg-[#333] rounded-full"
-                x-text="movie.country"
-              ></span>
             </div>
           </div>
         </article>
