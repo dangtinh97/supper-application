@@ -40,7 +40,12 @@ export class PhimController {
     if (url.includes('danh-sach/phim-moi-cap-nha')) {
       dataHome = dataCurl;
     }
-    if ((url.includes('/the-loai/') || url.includes('danh-sach/') ||url.includes('/tim-kiem?keyword=')) && !url.includes('danh-sach/phim-moi-cap-nhat')) {
+    if (
+      (url.includes('/the-loai/') ||
+        url.includes('danh-sach/') ||
+        url.includes('/tim-kiem?keyword=')) &&
+      !url.includes('danh-sach/phim-moi-cap-nhat')
+    ) {
       dataHome.pagination = dataCurl.data.params.pagination;
       dataHome.items = dataCurl.data.items;
     }
