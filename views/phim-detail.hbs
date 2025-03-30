@@ -2,7 +2,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Movie Detail</title>
+  <title>{{data.title}}</title>
   <script
     src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
     defer
@@ -17,33 +17,36 @@
 <body>
 <div
   x-data="{
-        movie: {
-          id: 1,
-          title: 'The Last Journey',
-          year: 2023,
-          genre: 'action',
-          country: 'usa',
-          rating: '4.8',
-          duration: '2h 15m',
-          director: 'John Smith',
-          cast: ['Emma Stone', 'Ryan Gosling', 'Brad Pitt'],
-          description: 'An epic adventure that follows a group of explorers on their final expedition to uncover ancient secrets in the heart of an unexplored wilderness. As they delve deeper into unknown territory, they face challenges that test their limits and force them to confront their own past.',
-          poster: 'https://placehold.co/300x450',
-          gallery: [
-            'https://placehold.co/600x400',
-            'https://placehold.co/600x400',
-            'https://placehold.co/600x400'
-          ]
-        },
+        movie: {{json data}},
         activeImage: 0,
-        showGallery: false
+        showGallery: false,
+        sessions(){
+            return this.movie.episodes
+        },
+        openApp(appUrl, fallbackUrl) {
+                const start = Date.now();
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = appUrl;
+                document.body.appendChild(iframe);
+
+                setTimeout(() => {
+                    if (Date.now() - start < 2000) {
+                        window.location.href = fallbackUrl;
+                    }
+                }, 1500);
+
+                setTimeout(() => {
+                    document.body.removeChild(iframe);
+                }, 3000);
+            }
       }"
   class="min-h-screen w-screen bg-[#121212] font-[Inter] text-[#fff]"
 >
   <!-- Back Button -->
   <header class="fixed top-0 w-full z-20 bg-[#121212] border-b-[1px] border-[#222]">
     <nav class="p-6">
-      <a href="index.html" class="inline-flex items-center gap-2 text-[#1DB954] hover:text-[#1ed760] transition-colors">
+      <a href="/phim" class="inline-flex items-center gap-2 text-[#1DB954] hover:text-[#1ed760] transition-colors">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
         </svg>
@@ -55,7 +58,7 @@
   <main class="pt-[76px]">
     <!-- Hero Section -->
     <section class="relative">
-      <div class="w-full h-[50vh] overflow-hidden relative">
+      <div class="w-full h-[25vh] overflow-hidden relative">
         <div class="absolute inset-0 bg-gradient-to-t from-[#121212] to-transparent z-10"></div>
         <img :src="movie.poster" alt="" class="w-full h-full object-cover object-center blur-sm">
       </div>
@@ -63,7 +66,6 @@
       <div class="container mx-auto px-6 -mt-32 relative z-20">
         <div class="flex flex-col md:flex-row gap-8">
           <img :src="movie.poster" :alt="movie.title" class="w-64 rounded-lg shadow-2xl">
-
           <div class="flex flex-col justify-end">
             <h1 class="text-4xl font-bold mb-4" x-text="movie.title"></h1>
             <div class="flex flex-wrap gap-4 items-center text-sm mb-6">
@@ -73,9 +75,31 @@
               <span class="px-3 py-1 bg-[#333] rounded-full capitalize" x-text="movie.genre"></span>
             </div>
 
-            <button class="watch-button bg-[#1DB954] text-white px-8 py-4 rounded-full font-semibold shadow-[0_4px_12px_rgba(29,185,84,0.3)] hover:bg-[#1ed760] transition-all duration-300 w-fit">
-              Watch Now
-            </button>
+{{!--  movies--}}
+            <template x-for="(session, index) in sessions()" :key="index">
+                <div class="card-collapse-content pt-4 pb-2 text-sm text-gray-500 dark:text-gray-200">
+                  <div class="w-full px-2 sm:px-0">
+                    <div>
+                      <div class="py-2 uppercase font-bold">
+                        Server: <span class="text-violet-500" x-text="session.server_name"></span>
+                      </div>
+                      <div class="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-16 gap-2">
+                          <template x-for="(server, indexF) in session.server_data" :key="indexF">
+                              <a href="#"
+                                         @click.prevent="openApp('youpipapp://open-phim?url='+server.link_m3u8, 'https://play.google.com/store/apps/details?id=org.youpip.app&hl=vi')"
+                                         title="Xem Tập 02"
+                                         class="text-center whitespace-nowrap px-1 py-1 rounded shadow-md bg-gray-400 text-gray-50 hover:bg-violet-500 dark:bg-slate-600 dark:hover:bg-violet-600" x-text="server.name">
+                                      </a>
+                                              </template>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </template>
+            {{!--  --}}
+{{!--             <button class="watch-button bg-[#1DB954] text-white px-8 py-4 rounded-full font-semibold shadow-[0_4px_12px_rgba(29,185,84,0.3)] hover:bg-[#1ed760] transition-all duration-300 w-fit"> --}}
+{{!--               Watch Now --}}
+{{!--             </button> --}}
           </div>
         </div>
       </div>
