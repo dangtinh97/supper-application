@@ -23,24 +23,7 @@
 <body>
 <div
   x-data="{
-        movie: {
-          id: 1,
-          title: 'The Last Journey',
-          year: 2023,
-          genre: 'action',
-          country: 'usa',
-          rating: '4.8',
-          duration: '2h 15m',
-          director: 'John Smith',
-          cast: ['Emma Stone', 'Ryan Gosling', 'Brad Pitt'],
-          description: 'An epic adventure that follows a group of explorers on their final expedition to uncover ancient secrets in the heart of an unexplored wilderness. As they delve deeper into unknown territory, they face challenges that test their limits and force them to confront their own past.',
-          poster: 'https://placehold.co/300x450',
-          gallery: [
-            'https://placehold.co/600x400',
-            'https://placehold.co/600x400',
-            'https://placehold.co/600x400'
-          ]
-        },
+        movie: {{json data}},
         activeImage: 0,
         showGallery: false,
         sessions(){
@@ -81,7 +64,7 @@
   <main class="pt-[76px]">
     <!-- Hero Section -->
     <section class="relative">
-      <div class="w-full h-[50vh] overflow-hidden relative">
+      <div class="w-full h-[25vh] overflow-hidden relative">
         <div class="absolute inset-0 bg-gradient-to-t from-[#121212] to-transparent z-10"></div>
         <img :src="movie.poster" alt="" class="w-full h-full object-cover object-center blur-sm">
       </div>
@@ -89,7 +72,6 @@
       <div class="container mx-auto px-6 -mt-32 relative z-20">
         <div class="flex flex-col md:flex-row gap-8">
           <img :src="movie.poster" :alt="movie.title" class="w-64 rounded-lg shadow-2xl">
-
           <div class="flex flex-col justify-end">
             <h1 class="text-4xl font-bold mb-4" x-text="movie.title"></h1>
             <div class="flex flex-wrap gap-4 items-center text-sm mb-6">
