@@ -25,9 +25,14 @@ export class P2PConnectGateway
   @SubscribeMessage('JOIN')
   async join(@MessageBody() data: any, @ConnectedSocket() client: any) {
     const { room_id } = data;
+    const my_room_id = client.handshake.auth.room_id;
     client.join(room_id);
-    client.to(room_id).emit('JOIN', {});
-    client.emit('JOIN', {});
+    client.to(room_id).emit('JOIN', {
+      room_id: my_room_id,
+    });
+    client.emit('JOIN', {
+      room_id: room_id,
+    });
   }
 
   @SubscribeMessage('SIGNALING')
