@@ -130,4 +130,11 @@ export class YoutubeController {
   async addInfoVideoById(@Body('data') data: string) {
     return await this.service.addVideoInfo(JSON.parse(data));
   }
+
+  @Post('/video-channel')
+  async addVideoChannel(@Body() body: any){
+    const list = JSON.parse(body['list']);
+    const channel = JSON.parse(body['channel']);
+    return await this.service.videoOfChannel(list,channel);
+  }
 }

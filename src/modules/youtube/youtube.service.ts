@@ -660,4 +660,59 @@ export class YoutubeService {
     }
     return dataInsert.map((item) => item.video_id);
   }
+
+  async videoOfChannel(list: any, channel: any) {
+    const dataInsert = list
+      .map((dataItem: any) => {
+        const item = _.get(dataItem, 'richItemRenderer.content.videoRenderer');
+        const videoId = _.get(item, 'videoId');
+        const title = _.get(item, 'title.runs.0.text');
+        const timeText = _.get(item, 'lengthText.simpleText', '0');
+        const time = this.convertToSeconds(timeText);
+        const channelId =
+          '/@' + _.get(channel, 'vanityChannelUrl').split('@')[1];
+        const channelData = {
+          name: _.get(channel, 'title', ''),
+          channel_id: channelId,
+          browser_id: _.get(
+            channel,
+            'externalId',
+            '',
+          ),
+          thumbnail: _.get(
+            channel,
+            'avatar.thumbnails.0.url',
+            '',
+          ),
+        }
+        return {
+          video_id: videoId,
+          thumbnails: [
+            {
+              url: `https://img.youtube.com/vi/${videoId}/sddefault.jpg`,
+              width: 336,
+              height: 188,
+            },
+          ],
+          title: title,
+          duration: time,
+          view_of_ytb: 0,
+          channel: channelData,
+          thumbnail: `https://img.youtube.com/vi/${videoId}/sddefault.jpg`,
+        };
+      })
+      .filter((item: any) => {
+        return item.video_id;
+      });
+    for (const item of dataInsert) {
+      await this.youtubeModel.findOneAndUpdate(
+        {
+          video_id: item.video_id,
+        },
+        { ...item },
+        { upsert: true },
+      );
+    }
+    return dataInsert;
+  }
 }
