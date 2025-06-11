@@ -31,6 +31,9 @@ export class DrumtifyUser extends BaseModel {
 
   @Prop()
   time_load_ad: Date;
+
+  @Prop()
+  language: string;
 }
 
 export const DrumtifyUserSchema = SchemaFactory.createForClass(DrumtifyUser);
