@@ -23,7 +23,7 @@ export class AuthService {
       {
         login_last: new Date(),
         app_version: appVersion,
-        lang: lang,
+        language: lang,
       },
       {
         upsert: true,
