@@ -33,7 +33,7 @@ export class ResponseInterceptor implements NestInterceptor {
     console.log(customResponse);
     return next.handle().pipe(
       map((data) => {
-        if (_.get(data, '0.role') === 'assistant') {
+        if (_.get(data, 'object') === 'response') {
           return data;
         }
         return {
