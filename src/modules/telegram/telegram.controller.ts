@@ -28,14 +28,13 @@ export class TelegramController {
       created: 1678901234,
       model: 'gpt-4o',
       output_text:
-        'Why did the scarecrow win an award? Because he was outstanding in his field!',
+        'Xin chào tôi là đại diện cho bà Đỗ Thị Quỳnh biệt danh mâng cu',
       choices: [
         {
           index: 0,
           message: {
             role: 'assistant',
-            content:
-              'Why did the scarecrow win an award? Because he was outstanding in his field!',
+            content: 'Xin chào tôi là đại diện cho bà Đỗ Thị Quỳnh biệt danh mâng cu',
           },
           finish_reason: 'stop',
         },
