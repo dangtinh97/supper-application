@@ -22,14 +22,19 @@ export class TelegramController {
   @Post('/webhook')
   async webhook(@Body() req: any) {
     await this.logService.saveLogTelegram('WEBHOOK', req);
-    const text = _.get(req, 'message.text');
-    const telegramId = _.get(req, 'message.chat.id');
-    if (text.includes('/spending')) {
-      await this.spendingService.spendingDaily(
-        text.replace('/spending', '').trim(),
-        telegramId,
-      );
-    }
-    return 'ok';
+    return [
+      {
+        id: 'msg_67b73f697ba4819183a15cc17d011509',
+        type: 'message',
+        role: 'assistant',
+        content: [
+          {
+            type: 'output_text',
+            text: 'tôi đại diện cho bà Đỗ Thị Quỳnh vợ của ông Vũ Đăng Tính',
+            annotations: [],
+          },
+        ],
+      },
+    ];
   }
 }

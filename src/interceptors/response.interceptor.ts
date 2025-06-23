@@ -1,11 +1,19 @@
-import { CallHandler, ExecutionContext, HttpException, Injectable, NestInterceptor } from "@nestjs/common";
-import { Reflector } from "@nestjs/core";
-import { catchError, map, Observable, throwError } from "rxjs";
-import { isArray } from "node:util";
+import {
+  CallHandler,
+  ExecutionContext,
+  HttpException,
+  Injectable,
+  NestInterceptor,
+} from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { catchError, map, Observable, throwError } from 'rxjs';
+import { isArray } from 'node:util';
+import * as _ from 'lodash';
 
 @Injectable()
-export class ResponseInterceptor implements NestInterceptor{
+export class ResponseInterceptor implements NestInterceptor {
   constructor(private reflector: Reflector) {}
+
   intercept(
     context: ExecutionContext,
     next: CallHandler<any>,
@@ -14,17 +22,26 @@ export class ResponseInterceptor implements NestInterceptor{
     const response = context.switchToHttp().getResponse();
     const statusCode = response.statusCode;
     const handler = context.getHandler();
-    const customResponse = this.reflector.get<{ message: string}>('message', handler);
+    const customResponse = this.reflector.get<{ message: string }>(
+      'message',
+      handler,
+    );
     let message = statusCode >= 400 ? 'Error' : 'Success';
-    if(customResponse){
+    if (customResponse) {
       message = customResponse.message;
     }
+    console.log(customResponse);
     return next.handle().pipe(
-      map((data) => ({
-        status: 200,
-        message: message,
-        data: data ? (isArray(data) ? { list: data } : data) : {},
-      })),
+      map((data) => {
+        if (_.get(data, '0.role') === 'assistant') {
+          return data;
+        }
+        return {
+          status: 200,
+          message: message,
+          data: data ? (isArray(data) ? { list: data } : data) : {},
+        };
+      }),
       catchError((err) => {
         const statusCode = err instanceof HttpException ? err.getStatus() : 500;
         const errorResponse = {
