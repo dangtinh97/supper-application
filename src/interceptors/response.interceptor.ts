@@ -34,6 +34,7 @@ export class ResponseInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map((data) => {
         if (_.get(data, 'usage')) {
+          response.status(200);
           return data;
         }
         return {
