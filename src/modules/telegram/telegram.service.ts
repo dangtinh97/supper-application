@@ -25,4 +25,8 @@ export class TelegramService {
     const json = await curl.json();
     return json;
   }
+
+  async responseGpt() {
+    return await this.settingService.getDataByKey('RESPONSE_GPT');
+  }
 }

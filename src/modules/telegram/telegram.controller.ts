@@ -22,28 +22,6 @@ export class TelegramController {
   @Post('/webhook')
   async webhook(@Body() req: any) {
     await this.logService.saveLogTelegram('WEBHOOK', req);
-    return {
-      id: 'resp_67cb61fa3a448190bcf2c42d96f0d1a8',
-      object: 'response',
-      created: 1678901234,
-      model: 'gpt-4o',
-      output_text:
-        'Xin chào tôi là đại diện cho bà Đỗ Thị Quỳnh biệt danh mâng cu',
-      choices: [
-        {
-          index: 0,
-          message: {
-            role: 'assistant',
-            content: 'Xin chào tôi là đại diện cho bà Đỗ Thị Quỳnh biệt danh mâng cu',
-          },
-          finish_reason: 'stop',
-        },
-      ],
-      usage: {
-        prompt_tokens: 10,
-        completion_tokens: 15,
-        total_tokens: 25,
-      },
-    };
+    return await this.service.responseGpt();
   }
 }
