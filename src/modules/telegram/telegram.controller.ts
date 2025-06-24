@@ -22,6 +22,10 @@ export class TelegramController {
   @Post('/webhook')
   async webhook(@Body() req: any) {
     await this.logService.saveLogTelegram('WEBHOOK', req);
-    return await this.service.responseGpt();
+    const data = await this.service.responseGpt();
+    return {
+      status: 0,
+      data: data,
+    };
   }
 }
