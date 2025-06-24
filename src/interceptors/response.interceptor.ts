@@ -35,7 +35,12 @@ export class ResponseInterceptor implements NestInterceptor {
       map((data) => {
         if (_.get(data, 'status') === 0) {
           response.status(200);
-          return data.data;
+          response.setHeader("Content-Type", "text/event-stream");
+          response.setHeader("Cache-Control", "no-cache");
+          response.setHeader("Connection", "keep-alive");
+
+          response.write(`data: ${JSON.stringify(data)}\n\n`);
+          return
         }
         return {
           status: 200,
