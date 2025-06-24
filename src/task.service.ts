@@ -8,7 +8,7 @@ export class TaskService {
     private readonly checkHealthService: ExternalHealthService
   ) {}
   private readonly logger = new Logger(TaskService.name);
-  @Cron(CronExpression.EVERY_MINUTE)
+  // @Cron(CronExpression.EVERY_MINUTE)
   handleCron() {
     this.checkHealthService.checkHealthAll().then(()=> {
     
