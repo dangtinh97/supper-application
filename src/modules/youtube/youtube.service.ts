@@ -674,17 +674,9 @@ export class YoutubeService {
         const channelData = {
           name: _.get(channel, 'title', ''),
           channel_id: channelId,
-          browser_id: _.get(
-            channel,
-            'externalId',
-            '',
-          ),
-          thumbnail: _.get(
-            channel,
-            'avatar.thumbnails.0.url',
-            '',
-          ),
-        }
+          browser_id: _.get(channel, 'externalId', ''),
+          thumbnail: _.get(channel, 'avatar.thumbnails.0.url', ''),
+        };
         return {
           video_id: videoId,
           thumbnails: [
@@ -704,6 +696,91 @@ export class YoutubeService {
       .filter((item: any) => {
         return item.video_id;
       });
+    for (const item of dataInsert) {
+      await this.youtubeModel.findOneAndUpdate(
+        {
+          video_id: item.video_id,
+        },
+        { ...item },
+        { upsert: true },
+      );
+    }
+    return dataInsert;
+  }
+
+  async suggestVideoByIdV2(data: any) {
+    let dataInsert = _.map(data, (dataOfItem: any) => {
+      const item = _.get(dataOfItem, 'lockupViewModel');
+      if (!item) {
+        return {};
+      }
+      const timeText = _.get(
+        item,
+        'contentImage.thumbnailViewModel.overlays.0.thumbnailOverlayBadgeViewModel.thumbnailBadges.0.thumbnailBadgeViewModel.text',
+        '',
+      );
+      let view = _.get(
+        item,
+        'compactVideoRenderer.viewCountText.simpleText',
+        ',',
+        '',
+      );
+      const videoId = _.get(item, 'contentId');
+      if (!videoId) {
+        return {};
+      }
+      view = !/\d/.test(view) ? 0 : parseInt(view);
+      try {
+        return {
+          video_id: videoId,
+          thumbnails: [
+            {
+              url: `https://img.youtube.com/vi/${videoId}/sddefault.jpg`,
+              width: 336,
+              height: 188,
+            },
+          ],
+          title: _.get(
+            item,
+            'metadata.lockupMetadataViewModel.title.content',
+            '',
+          ),
+          duration: this.convertToSeconds(timeText ?? '00:00') || 0,
+          view_of_ytb: view || 0,
+          channel: {
+            name:
+              _.get(
+                item,
+                'metadata.lockupMetadataViewModel.metadata.contentMetadataViewModel.metadataRows.0.metadataParts.0.text.content',
+                '',
+              ) || '',
+            channel_id:
+              _.get(
+                item,
+                'metadata.lockupMetadataViewModel.image.decoratedAvatarViewModel.rendererContext.commandContext.onTap.innertubeCommand.commandMetadata.webCommandMetadata.url',
+                '',
+              ) || '',
+            browser_id:
+              _.get(
+                item,
+                'metadata.lockupMetadataViewModel.image.decoratedAvatarViewModel.rendererContext.commandContext.onTap.innertubeCommand.browseEndpoint.browseId',
+                '',
+              ) || '',
+            thumbnail:
+              _.get(
+                item,
+                'metadata.lockupMetadataViewModel.image.decoratedAvatarViewModel.avatar.avatarViewModel.image.sources.0.url',
+                '',
+              ) || '',
+          },
+          thumbnail: `https://img.youtube.com/vi/${videoId}/sddefault.jpg`,
+        };
+      } catch (e) {
+        console.log(videoId, e.message);
+        return {};
+      }
+    });
+    dataInsert = _.filter(dataInsert, (item: { title: any }) => item.title);
     for (const item of dataInsert) {
       await this.youtubeModel.findOneAndUpdate(
         {

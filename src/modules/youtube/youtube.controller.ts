@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  Param,
   Post,
   Query,
   Req,
@@ -81,11 +80,13 @@ export class YoutubeController {
 
   @Post('/video-suggest-by-id')
   async videoSuggestById(@Body() data: any) {
-    return this.service.saveAndFilterVideoSuggest(
-      typeof data['data'] === 'string'
+    const dataParse = typeof data['data'] === 'string'
         ? JSON.parse(data['data'])
-        : data['data'],
-    );
+        : data['data'];
+    if (dataParse.length > 1 && _.get(dataParse,'0.lockupViewModel')) {
+      return await this.service.suggestVideoByIdV2(dataParse);
+    }
+    return await this.service.saveAndFilterVideoSuggest(dataParse);
   }
 
   @Get('/trending')
