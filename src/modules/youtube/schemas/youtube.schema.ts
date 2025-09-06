@@ -28,6 +28,8 @@ export class Youtube extends BaseModel {
 
   @Prop({ type: SchemaTypes.Mixed })
   channel: any;
+  @Prop()
+  language_title: string;
 }
 
 export const YoutubeSchema = SchemaFactory.createForClass(Youtube);
