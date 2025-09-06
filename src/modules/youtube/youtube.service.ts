@@ -321,50 +321,63 @@ export class YoutubeService {
   }
 
   async recentlyVideo(userOid: string) {
-    const finds = await this.recentlyVideoModel
-      .aggregate([
-        {
-          $match: {
-            user_oid: userOid
-              ? new ObjectId(userOid)
-              : {
+    let finds:any[] = [];
+    if(ObjectId.isValid(userOid)){
+      finds = await this.youtubeModel
+        .aggregate([
+          {
+            $match: {
+              user_oid: userOid
+                ? new ObjectId(userOid)
+                : {
                   $exists: true,
                 },
+            },
           },
-        },
-        {
-          $lookup: {
-            from: 'ytb_video',
-            localField: 'video_id',
-            foreignField: 'video_id',
-            as: 'video',
+          {
+            $lookup: {
+              from: 'ytb_video',
+              localField: 'video_id',
+              foreignField: 'video_id',
+              as: 'video',
+            },
           },
-        },
-        {
-          $group: {
-            _id: '$video_id',
-            doc: { $first: '$$ROOT' }, // Lấy bản ghi mới nhất của mỗi video_id
+          {
+            $sort: {
+              updated_at: -1,
+            },
           },
-        },
-        {
-          $replaceRoot: { newRoot: '$doc' },
-        },
-        {
-          $sort: {
-            updated_at: -1,
+          {
+            $group: {
+              _id: '$video_id',
+              doc: { $first: '$$ROOT' }, // Lấy bản ghi mới nhất của mỗi video_id
+            },
           },
-        },
-        {
-          $limit: 20,
-        },
-      ])
-      .exec();
+          {
+            $replaceRoot: { newRoot: '$doc' },
+          },
+          {
+            $limit: 20,
+          },
+        ])
+        .exec();
+    } else {
+      finds = await this.youtubeModel.aggregate([{ $sample: { size: 20 } }]);
+    }
     return finds
       .map((item) => {
-        if (!item.video[0]) {
+        if(item.video){
+          if (!item.video[0]) {
+            return null;
+          }
+          const itemSet: any = item.video[0];
+          itemSet.thumbnail = `https://img.youtube.com/vi/${itemSet.video_id}/sddefault.jpg`;
+          return itemSet;
+        }
+        if (!item.video_id) {
           return null;
         }
-        const itemSet: any = item.video[0];
+        const itemSet: any = item;
         itemSet.thumbnail = `https://img.youtube.com/vi/${itemSet.video_id}/sddefault.jpg`;
         return itemSet;
       })
