@@ -323,15 +323,11 @@ export class YoutubeService {
   async recentlyVideo(userOid: string) {
     let finds:any[] = [];
     if(ObjectId.isValid(userOid)){
-      finds = await this.youtubeModel
+      finds = await this.recentlyVideoModel
         .aggregate([
           {
             $match: {
-              user_oid: userOid
-                ? new ObjectId(userOid)
-                : {
-                  $exists: true,
-                },
+              user_oid: new ObjectId(userOid)
             },
           },
           {
@@ -343,11 +339,6 @@ export class YoutubeService {
             },
           },
           {
-            $sort: {
-              updated_at: -1,
-            },
-          },
-          {
             $group: {
               _id: '$video_id',
               doc: { $first: '$$ROOT' }, // Lấy bản ghi mới nhất của mỗi video_id
@@ -355,6 +346,11 @@ export class YoutubeService {
           },
           {
             $replaceRoot: { newRoot: '$doc' },
+          },
+          {
+            $sort: {
+              updated_at: -1,
+            },
           },
           {
             $limit: 20,
