@@ -53,7 +53,10 @@ export class AuthService {
     if (update.time_load_ad && update.time_load_ad <= new Date()) {
       loadAd = true;
     }
-    if (findConfigAd < 0) {
+    if (
+      findConfigAd < 0 ||
+      update.created_at > dayjs().subtract(1, 'day').toDate()
+    ) {
       loadAd = false;
     }
     return {
