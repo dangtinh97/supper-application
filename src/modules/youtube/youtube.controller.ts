@@ -54,7 +54,10 @@ export class YoutubeController {
     if (this.isReview(req)) {
       return await this.service.noCopyRightSounds();
     }
-    return await this.service.recentlyVideo(type === 'me' ? user_oid : null);
+    return await this.service.recentlyVideo(
+      type === 'me' ? user_oid : null,
+      req.headers['lang'] ?? 'vi',
+    );
   }
 
   @Get('/top-channel-view')
@@ -137,5 +140,10 @@ export class YoutubeController {
     const list = JSON.parse(body['list']);
     const channel = JSON.parse(body['channel']);
     return await this.service.videoOfChannel(list,channel);
+  }
+  
+  @Get('/set-language-title')
+  async setLanguageTitle(){
+    return await this.service.setLanguageTitle();
   }
 }

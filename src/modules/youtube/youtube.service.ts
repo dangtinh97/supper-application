@@ -6,6 +6,8 @@ import { RecentlyVideo } from './schemas/recently_video';
 import { ObjectId } from 'mongodb';
 import { SearchKeyword } from './schemas/search-keyword.schema';
 
+const { franc } = require('franc-cjs');
+
 const _ = require('lodash');
 
 export const badWords = [
@@ -320,51 +322,77 @@ export class YoutubeService {
     return {};
   }
 
-  async recentlyVideo(userOid: string) {
-    const finds = await this.recentlyVideoModel
-      .aggregate([
+  async recentlyVideo(userOid: string, language: string) {
+    let finds: any[] = [];
+    if (ObjectId.isValid(userOid)) {
+      finds = await this.recentlyVideoModel
+        .aggregate([
+          {
+            $match: {
+              user_oid: new ObjectId(userOid),
+            },
+          },
+          {
+            $lookup: {
+              from: 'ytb_video',
+              localField: 'video_id',
+              foreignField: 'video_id',
+              as: 'video',
+            },
+          },
+          {
+            $group: {
+              _id: '$video_id',
+              doc: { $first: '$$ROOT' }, // Lấy bản ghi mới nhất của mỗi video_id
+            },
+          },
+          {
+            $replaceRoot: { newRoot: '$doc' },
+          },
+          {
+            $sort: {
+              updated_at: -1,
+            },
+          },
+          {
+            $limit: 20,
+          },
+        ])
+        .exec();
+    } else {
+      let match = {};
+      if (['vi', 'vn'].indexOf(language.toLowerCase()) !== -1) {
+        match = {
+          $eq: 'vie',
+        };
+      } else {
+        match = {
+          $ne: 'vie',
+        };
+      }
+      finds = await this.youtubeModel.aggregate([
         {
           $match: {
-            user_oid: userOid
-              ? new ObjectId(userOid)
-              : {
-                  $exists: true,
-                },
+            language_title: match,
           },
         },
-        {
-          $lookup: {
-            from: 'ytb_video',
-            localField: 'video_id',
-            foreignField: 'video_id',
-            as: 'video',
-          },
-        },
-        {
-          $group: {
-            _id: '$video_id',
-            doc: { $first: '$$ROOT' }, // Lấy bản ghi mới nhất của mỗi video_id
-          },
-        },
-        {
-          $replaceRoot: { newRoot: '$doc' },
-        },
-        {
-          $sort: {
-            updated_at: -1,
-          },
-        },
-        {
-          $limit: 20,
-        },
-      ])
-      .exec();
+        { $sample: { size: 20 } },
+      ]);
+    }
     return finds
       .map((item) => {
-        if (!item.video[0]) {
+        if (item.video) {
+          if (!item.video[0]) {
+            return null;
+          }
+          const itemSet: any = item.video[0];
+          itemSet.thumbnail = `https://img.youtube.com/vi/${itemSet.video_id}/sddefault.jpg`;
+          return itemSet;
+        }
+        if (!item.video_id) {
           return null;
         }
-        const itemSet: any = item.video[0];
+        const itemSet: any = item;
         itemSet.thumbnail = `https://img.youtube.com/vi/${itemSet.video_id}/sddefault.jpg`;
         return itemSet;
       })
@@ -791,5 +819,45 @@ export class YoutubeService {
       );
     }
     return dataInsert;
+  }
+
+  private countUpdateData = 0;
+
+  async setLanguageTitle() {
+    const finds = await this.youtubeModel.find(
+      {
+        language_title: {
+          $exists: false,
+        },
+      },
+      {
+        title: 1,
+      },
+      { limit: 2000 },
+    );
+    const updates = finds.map(async (item) => {
+      const languageTitle = franc(item.title);
+      return await this.youtubeModel
+        .findOneAndUpdate(
+          {
+            _id: item._id,
+          },
+          {
+            $set: {
+              language_title: languageTitle,
+            },
+          },
+        )
+        .exec();
+    });
+    const countUpdate = (await Promise.all(updates)).length;
+    this.countUpdateData += countUpdate;
+    console.log(this.countUpdateData);
+    if (countUpdate > 0) {
+      return await this.setLanguageTitle();
+    }
+    return {
+      count: countUpdate,
+    };
   }
 }

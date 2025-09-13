@@ -12,12 +12,16 @@ export class ShopeeService {
 
   async link() {
     return await this.affiliateModel
-      .find({
-        show: true,
-      })
-      .sort({
-        order: 1,
-      })
+      .aggregate([
+        {
+          $match: {
+            show: true,
+          },
+        },
+        {
+          $sample: { size: 1 },
+        },
+      ])
       .exec();
   }
 }

@@ -24,6 +24,7 @@ Tạo file cấu hình cho domain tool.myoupip.com:
 
 ```
 sudo nano /etc/nginx/sites-available/tool.myoupip.com
+sudo nano /etc/nginx/sites-available/linafeel.myoupip.com
 ```
 
 Thêm nội dung sau:
@@ -32,10 +33,10 @@ nginx
 Copy code
 ```
 server{
-    listen 80;
-    server_name tool.myoupip.com;
+    listen 4000;
+    server_name linafeel.myoupip.com;
     location / {
-        proxy_pass http://localhost:3000;
+        proxy_pass http://localhost:4000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -46,7 +47,7 @@ server{
 ```
 
 ### Kích hoạt cấu hình:
-```sudo ln -s /etc/nginx/sites-available/tool.myoupip.com /etc/nginx/sites-enabled/```
+```sudo ln -s /etc/nginx/sites-available/linafeel.myoupip.com /etc/nginx/sites-enabled/```
 
 ```sudo nginx -t```
 
@@ -62,7 +63,7 @@ server{
 bash
 Copy code
 
-```sudo certbot --nginx -d tool.myoupip.com```
+```sudo certbot --nginx -d linafeel.myoupip.com```
 
 Certbot sẽ yêu cầu bạn:
 
