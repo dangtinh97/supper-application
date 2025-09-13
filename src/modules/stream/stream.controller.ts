@@ -31,9 +31,13 @@ export class StreamController {
   async historyStream(@Req() req: Request, @User() { user_oid }: any) {
     let playFirst = [];
     if (!this.isReview(req)) {
-      playFirst = await this.service.getVieOn({
+      const findRecomment = await this.service.getVieOn({
+        type: 'RECOMMEND',
+      });
+      const vieon = await this.service.getVieOn({
         type: 'VIEON',
       });
+      playFirst = findRecomment.concat(...vieon);
     }
     const userHistory = await this.service.getVieOn({
       user_oid: new ObjectId(user_oid),
