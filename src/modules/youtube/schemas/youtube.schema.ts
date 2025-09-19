@@ -30,6 +30,9 @@ export class Youtube extends BaseModel {
   channel: any;
   @Prop()
   language_title: string;
+
+  @Prop({ default: true })
+  is_vie: boolean;
 }
 
 export const YoutubeSchema = SchemaFactory.createForClass(Youtube);

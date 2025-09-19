@@ -360,20 +360,10 @@ export class YoutubeService {
         ])
         .exec();
     } else {
-      let match = {};
-      if (['vi', 'vn'].indexOf(language.toLowerCase()) !== -1) {
-        match = {
-          $eq: 'vie',
-        };
-      } else {
-        match = {
-          $ne: 'vie',
-        };
-      }
       finds = await this.youtubeModel.aggregate([
         {
           $match: {
-            language_title: match,
+            is_vie: ['vi', 'vn'].indexOf(language.toLowerCase()) !== -1,
           },
         },
         { $sample: { size: 20 } },
@@ -845,6 +835,7 @@ export class YoutubeService {
           {
             $set: {
               language_title: languageTitle,
+              is_vie: languageTitle === 'vie',
             },
           },
         )
