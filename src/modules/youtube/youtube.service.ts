@@ -364,18 +364,14 @@ export class YoutubeService {
       const r = Math.random();
       finds = await this.youtubeModel
         .find({
-          $match: {
-            is_vie: ['vi', 'vn'].indexOf(language.toLowerCase()) !== -1,
-          },
+          is_vie: ['vi', 'vn'].indexOf(language.toLowerCase()) !== -1,
           rand: { $gte: r },
         })
         .limit(LIMIT);
       if(finds.length<LIMIT){
         const find2 = await this.youtubeModel
           .find({
-            $match: {
-              is_vie: ['vi', 'vn'].indexOf(language.toLowerCase()) !== -1,
-            },
+            is_vie: ['vi', 'vn'].indexOf(language.toLowerCase()) !== -1,
             rand: { $lt: r },
           })
           .limit(LIMIT - finds.length);
