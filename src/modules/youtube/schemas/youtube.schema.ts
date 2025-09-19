@@ -33,6 +33,8 @@ export class Youtube extends BaseModel {
 
   @Prop({ default: true })
   is_vie: boolean;
+  @Prop()
+  rand: number;
 }
 
 export const YoutubeSchema = SchemaFactory.createForClass(Youtube);

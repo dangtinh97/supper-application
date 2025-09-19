@@ -139,7 +139,7 @@ export class YoutubeController {
   async addVideoChannel(@Body() body: any){
     const list = JSON.parse(body['list']);
     const channel = JSON.parse(body['channel']);
-    return await this.service.videoOfChannel(list,channel);
+    return await this.service.videoOfChannel(list, channel);
   }
   
   @Get('/set-language-title')

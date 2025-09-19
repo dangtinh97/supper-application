@@ -323,6 +323,7 @@ export class YoutubeService {
   }
 
   async recentlyVideo(userOid: string, language: string) {
+    const LIMIT = 30;
     let finds: any[] = [];
     if (ObjectId.isValid(userOid)) {
       finds = await this.recentlyVideoModel
@@ -355,19 +356,30 @@ export class YoutubeService {
             },
           },
           {
-            $limit: 20,
+            $limit: LIMIT,
           },
         ])
         .exec();
     } else {
-      finds = await this.youtubeModel.aggregate([
-        {
+      const r = Math.random();
+      finds = await this.youtubeModel
+        .find({
           $match: {
             is_vie: ['vi', 'vn'].indexOf(language.toLowerCase()) !== -1,
           },
-        },
-        { $sample: { size: 20 } },
-      ]);
+          rand: { $gte: r },
+        })
+        .limit(LIMIT);
+      if(finds.length<LIMIT){
+        finds = await this.youtubeModel
+          .find({
+            $match: {
+              is_vie: ['vi', 'vn'].indexOf(language.toLowerCase()) !== -1,
+            },
+            rand: { $lt: r },
+          })
+          .limit(LIMIT - finds.length);
+      }
     }
     return finds
       .map((item) => {
@@ -836,6 +848,7 @@ export class YoutubeService {
             $set: {
               language_title: languageTitle,
               is_vie: languageTitle === 'vie',
+              rand: Math.random(),
             },
           },
         )
