@@ -5,6 +5,7 @@ import { Model, Types } from 'mongoose';
 import { RecentlyVideo } from './schemas/recently_video';
 import { ObjectId } from 'mongodb';
 import { SearchKeyword } from './schemas/search-keyword.schema';
+import { CounterService } from '../../share_modules/counter/counter.service';
 
 const { franc } = require('franc-cjs');
 
@@ -58,6 +59,7 @@ export class YoutubeService {
     private readonly recentlyVideoModel: Model<RecentlyVideo>,
     @InjectModel(SearchKeyword.name)
     private readonly searchKeywordModel: Model<SearchKeyword>,
+    private readonly counterService: CounterService,
   ) {}
 
   async getVideo(videoId: string) {
@@ -361,22 +363,27 @@ export class YoutubeService {
         ])
         .exec();
     } else {
-      const r = Math.random();
+      const isVie = ['vi', 'vn'].indexOf(language.toLowerCase()) !== -1;
+      const findCounter = await this.counterService.getValueByKey(
+        isVie ? 'video_vie' : 'video_not_vie',
+      );
+      const rands = this.getRandomUnique(findCounter, LIMIT);
       finds = await this.youtubeModel
-        .find({
-          is_vie: ['vi', 'vn'].indexOf(language.toLowerCase()) !== -1,
-          rand: { $gte: r },
-        })
+        .find(
+          {
+            is_vie: isVie,
+            rand: { $in: rands },
+          },
+          {
+            is_vie: 0,
+            rand: 0,
+            language_title: 0,
+            __v: 0,
+            created_at: 0,
+            updated_at: 0,
+          },
+        )
         .limit(LIMIT);
-      if(finds.length<LIMIT){
-        const find2 = await this.youtubeModel
-          .find({
-            is_vie: ['vi', 'vn'].indexOf(language.toLowerCase()) !== -1,
-            rand: { $lt: r },
-          })
-          .limit(LIMIT - finds.length);
-        finds = finds.concat(...find2);
-      }
     }
     return finds
       .map((item) => {
@@ -823,6 +830,43 @@ export class YoutubeService {
   private countUpdateData = 0;
 
   async setLanguageTitle() {
+    // const findVies = await this.youtubeModel.find(
+    //   {
+    //     rand: {
+    //       $lt: 1,
+    //     },
+    //   },
+    //   {
+    //     rand: 1,
+    //     is_vie: 1,
+    //   },
+    //   { limit: 10000 },
+    // );
+    // const runMap = findVies.map(async (item) => {
+    //   const counter = await this.counterService.getNextIndex(
+    //     item.is_vie ? 'video_vie' : 'video_not_vie',
+    //   );
+    //   console.log(counter);
+    //   await this.youtubeModel
+    //     .findOneAndUpdate(
+    //       {
+    //         _id: item._id,
+    //       },
+    //       {
+    //         $set: {
+    //           rand: counter,
+    //         },
+    //       },
+    //     )
+    //     .exec();
+    // });
+    // await Promise.all(runMap);
+    // if (findVies.length > 0) {
+    //   return await this.setLanguageTitle();
+    // }
+    // return {
+    //   length: findVies.length,
+    // };
     const finds = await this.youtubeModel.find(
       {
         language_title: {
@@ -836,6 +880,9 @@ export class YoutubeService {
     );
     const updates = finds.map(async (item) => {
       const languageTitle = franc(item.title);
+      const counter = await this.counterService.getNextIndex(
+        languageTitle === 'vie' ? 'video_vie' : 'video_not_vie',
+      );
       return await this.youtubeModel
         .findOneAndUpdate(
           {
@@ -845,7 +892,7 @@ export class YoutubeService {
             $set: {
               language_title: languageTitle,
               is_vie: languageTitle === 'vie',
-              rand: Math.random(),
+              rand: counter,
             },
           },
         )
@@ -860,5 +907,13 @@ export class YoutubeService {
     return {
       count: countUpdate,
     };
+  }
+
+  getRandomUnique(total: number, limit: number): number[] {
+    const set = new Set<number>();
+    while (set.size < limit) {
+      set.add(Math.floor(Math.random() * total) + 1);
+    }
+    return Array.from(set);
   }
 }

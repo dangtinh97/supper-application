@@ -9,6 +9,7 @@ import {
   SearchKeywordSchema,
 } from './schemas/search-keyword.schema';
 import { VideoPlaylist, VideoPlaylistSchema } from "../user/schemas/video-playlist.schema";
+import { CounterModule } from "../../share_modules/counter/counter.module";
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { VideoPlaylist, VideoPlaylistSchema } from "../user/schemas/video-playli
         schema: VideoPlaylistSchema,
       },
     ]),
+    CounterModule,
   ],
   controllers: [YoutubeController],
   providers: [YoutubeService],
