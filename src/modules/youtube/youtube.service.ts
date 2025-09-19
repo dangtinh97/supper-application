@@ -371,7 +371,7 @@ export class YoutubeService {
         })
         .limit(LIMIT);
       if(finds.length<LIMIT){
-        finds = await this.youtubeModel
+        const find2 = await this.youtubeModel
           .find({
             $match: {
               is_vie: ['vi', 'vn'].indexOf(language.toLowerCase()) !== -1,
@@ -379,6 +379,7 @@ export class YoutubeService {
             rand: { $lt: r },
           })
           .limit(LIMIT - finds.length);
+        finds = finds.concat(...find2);
       }
     }
     return finds
