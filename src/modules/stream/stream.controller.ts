@@ -29,22 +29,7 @@ export class StreamController {
 
   @Get('/history')
   async historyStream(@Req() req: Request, @User() { user_oid }: any) {
-    let playFirst = [];
-    if (!this.isReview(req)) {
-      let findRecomment = await this.service.getVieOn({
-        type: 'RECOMMEND',
-      });
-      findRecomment = findRecomment.map((item)=>{
-        return {
-          ...item,
-          type: 'URL_OF_USER',
-        }
-      })
-      const vieon = await this.service.getVieOn({
-        type: 'VIEON',
-      });
-      playFirst = findRecomment.concat(...vieon);
-    }
+    const playFirst = [];
     const userHistory = await this.service.getVieOn({
       user_oid: new ObjectId(user_oid),
     });
@@ -65,5 +50,13 @@ export class StreamController {
   async deleteStreamMe(@User() { user_oid }: any, @Param('id') id: string) {
     await this.service.delete(user_oid, id);
     return {};
+  }
+
+  @Get('/suggest')
+  async suggest(@Req() req: Request) {
+    if (this.isReview(req)) {
+      return [];
+    }
+    return await this.service.getSuggest();
   }
 }

@@ -3,12 +3,15 @@ import { InjectModel } from '@nestjs/mongoose';
 import { LinkStream } from './schemas/link-stream.schema';
 import { Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
+import { Suggest } from './schemas/suggest.schema';
 
 @Injectable()
 export class StreamService {
   constructor(
     @InjectModel(LinkStream.name)
     private linkStreamModel: Model<LinkStream>,
+    @InjectModel(Suggest.name)
+    private suggestModel: Model<Suggest>,
   ) {}
 
   async getVieOn(cond: any) {
@@ -23,12 +26,12 @@ export class StreamService {
     });
   }
 
-  async delete(userOid: string, id: string){
+  async delete(userOid: string, id: string) {
     await this.linkStreamModel.deleteOne({
       user_oid: new ObjectId(userOid),
-      _id: new ObjectId(id)
-    })
-    return {}
+      _id: new ObjectId(id),
+    });
+    return {};
   }
 
   async save(userOid: string, url: string) {
@@ -38,5 +41,26 @@ export class StreamService {
       url: url,
       name: '',
     });
+  }
+
+  async getSuggest() {
+    const findAll = await this.suggestModel
+      .find({
+        status: 'ACTIVE',
+      })
+      .sort({ id: -1 });
+    console.log(findAll);
+    let result = {};
+
+    findAll.forEach((item) => {
+      if (item.parent_id == null || item.parent_id === 0) {
+        result[item.id] = {
+          name: item.name,
+          items:[],
+        };
+      }
+    });
+
+    return result;
   }
 }
