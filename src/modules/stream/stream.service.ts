@@ -48,16 +48,26 @@ export class StreamService {
       .find({
         status: 'ACTIVE',
       })
-      .sort({ id: -1 });
+      .sort({ sort: -1 });
     console.log(findAll);
-    let result = {};
+    let result = [];
 
     findAll.forEach((item) => {
       if (item.parent_id == null || item.parent_id === 0) {
-        result[item.id] = {
+        const filterItems = findAll.filter((itemSuggest) => {
+          return itemSuggest.parent_id === item.id;
+        });
+        result.push({
           name: item.name,
-          items:[],
-        };
+          items: filterItems.map((res) => {
+            return {
+              name: res.name,
+              image: res.image,
+              content: res.content,
+              type: res.type,
+            };
+          }),
+        });
       }
     });
 

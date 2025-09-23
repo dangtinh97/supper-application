@@ -5,6 +5,7 @@ export enum ESuggestType {
   CONTENT_AUDIO = 'CONTENT_AUDIO',
   LINK_PLAY = 'LINK_PLAY',
   CONTENT = 'CONTENT',
+  IMAGE = 'IMAGE',
 }
 
 @Schema({
@@ -34,6 +35,9 @@ export class Suggest {
 
   @Prop()
   source: string;
+
+  @Prop()
+  sort: number;
 }
 
 export const SuggestSchema = SchemaFactory.createForClass(Suggest);
