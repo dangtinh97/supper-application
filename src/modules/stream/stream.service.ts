@@ -4,6 +4,7 @@ import { LinkStream } from './schemas/link-stream.schema';
 import { Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
 import { Suggest } from './schemas/suggest.schema';
+import * as _ from 'lodash';
 
 @Injectable()
 export class StreamService {
@@ -49,9 +50,7 @@ export class StreamService {
         status: 'ACTIVE',
       })
       .sort({ sort: -1 });
-    console.log(findAll);
-    let result = [];
-
+    const result = [];
     findAll.forEach((item) => {
       if (item.parent_id == null || item.parent_id === 0) {
         const filterItems = findAll.filter((itemSuggest) => {
@@ -72,5 +71,71 @@ export class StreamService {
     });
 
     return result;
+  }
+
+  async crawlFilmDailyMotion() {
+    const find = await this.suggestModel.find({
+      source: { $regex: 'dailymotion', $options: 'i' },
+    });
+    let update = 0;
+    for (const findKey in find) {
+      const item = find[findKey];
+      if (item.content.indexOf('https://') != 0) {
+        continue;
+      }
+      const curl = await fetch(item.content);
+      const status = curl.status;
+      if (status == 200) {
+        continue;
+      }
+      await this.suggestModel.findOneAndUpdate(
+        {
+          _id: item._id,
+        },
+        {
+          $set: {
+            status: 'NO_ACTIVE',
+          },
+        },
+      );
+      const linkNew = await this.getLinkStreamNew(item.source);
+      if (linkNew == null) {
+        continue;
+      }
+      update++;
+      await this.suggestModel.findOneAndUpdate(
+        {
+          _id: item._id,
+        },
+        {
+          $set: {
+            content: linkNew,
+            status: 'ACTIVE',
+          },
+        },
+      );
+    }
+
+    return { update };
+  }
+
+  async getLinkStreamNew(url: string) {
+    try {
+      const curl = await fetch(
+        'https://www.genviral.io/api/tools/social-downloader',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            url: url,
+          }),
+        },
+      );
+
+      const json = await curl.json();
+
+      return _.get(json, 'medias.0.url', null);
+    } catch (e) {
+      return null;
+    }
   }
 }

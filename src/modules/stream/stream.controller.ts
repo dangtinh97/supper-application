@@ -100,4 +100,15 @@ export class StreamController {
     }
     return await this.service.getSuggest();
   }
+
+  @Get('/crawl-dailymotion')
+  async crawlFilm() {
+    try {
+      return await this.service.crawlFilmDailyMotion();
+    } catch (e) {
+      return {
+        error: e.message,
+      };
+    }
+  }
 }
