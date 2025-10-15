@@ -18,8 +18,9 @@ export class AdService {
     return {
       ...config,
       ads_enabled:
+        config.ads_enabled &&
         new Date().getTime() - user.created_at.getTime() >=
-        adFreeTimeRegisterMs,
+          adFreeTimeRegisterMs,
     };
   }
 }
