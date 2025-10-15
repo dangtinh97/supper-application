@@ -24,6 +24,7 @@ import { StreamModule } from "./modules/stream/stream.module";
 import { ShareVideoModule } from "./modules/share-video/share-video.module";
 import { PhimModule } from "./modules/phim/phim.module";
 import { ShopeeModule } from './modules/shopee/shopee.module';
+import { AdModule } from './modules/ad/ad.module';
 
 @Module({
   imports: [
@@ -72,6 +73,7 @@ import { ShopeeModule } from './modules/shopee/shopee.module';
     ShareVideoModule,
     PhimModule,
     ShopeeModule,
+    AdModule,
   ],
   controllers: [AppController],
   providers: [AppService, TaskService, JwtService, ConfigService, JwtStrategy],

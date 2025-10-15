@@ -33,7 +33,7 @@ async function bootstrap() {
   });
   const configService = app.get(ConfigService);
   const port = configService.get<AppConfig['APP_PORT']>('APP_PORT')!;
-  logger.log(`Server is running on port ${port}`);
+  logger.debug(`Application is running on port: ${port}`);
 
   await app.listen(port);
 }

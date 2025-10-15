@@ -120,4 +120,8 @@ export class UserService {
     });
     return await this.youtubeService.findVideoByIds(find.video_ids || []);
   }
+  
+  async findByOid(userOid: string){
+    return await this.userModel.findOne({_id:new ObjectId(userOid)}).exec()
+  }
 }
