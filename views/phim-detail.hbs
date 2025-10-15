@@ -33,17 +33,17 @@
                 const start = Date.now();
                 const iframe = document.createElement('iframe');
                 iframe.style.display = 'none';
-                iframe.src = appUrl+'?user='+(window.localStorage.user?? '');
+                iframe.src = appUrl+'?user='+(window.localStorage.user?? '')+'&link='+window.location.pathname.split('/')[3];
                 document.body.appendChild(iframe);
-                console.log(appUrl+'&user='+(window.localStorage.user?? ''))
+                console.log(appUrl+'&user='+(window.localStorage.user?? '')+'&slug='+window.location.pathname.split('/')[3])
                 setTimeout(() => {
                     if (Date.now() - start < 2000) {
-                        window.location.href = fallbackUrl;
+<!--                        window.location.href = fallbackUrl;-->
                     }
                 }, 1500);
 
                 setTimeout(() => {
-                    document.body.removeChild(iframe);
+<!--                    document.body.removeChild(iframe);-->
                 }, 3000);
             }
       }"
