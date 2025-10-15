@@ -20,11 +20,12 @@ Trên server AWS, cài đặt Nginx:
 ```sudo apt install nginx -y```
 
 2.2 Cấu hình Nginx
-Tạo file cấu hình cho domain tool.myoupip.com:
+Tạo file cấu hình cho domain iot-server.myoupip.com:
 
 ```
 sudo nano /etc/nginx/sites-available/tool.myoupip.com
 sudo nano /etc/nginx/sites-available/linafeel.myoupip.com
+sudo nano /etc/nginx/sites-available/iot-server.myoupip.com
 ```
 
 Thêm nội dung sau:
@@ -33,10 +34,9 @@ nginx
 Copy code
 ```
 server{
-    listen 4000;
-    server_name linafeel.myoupip.com;
+    server_name iot-server.myoupip.com;
     location / {
-        proxy_pass http://localhost:4000;
+        proxy_pass http://localhost:4002;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -47,7 +47,7 @@ server{
 ```
 
 ### Kích hoạt cấu hình:
-```sudo ln -s /etc/nginx/sites-available/linafeel.myoupip.com /etc/nginx/sites-enabled/```
+```sudo ln -s /etc/nginx/sites-available/iot-server.myoupip.com /etc/nginx/sites-enabled/```
 
 ```sudo nginx -t```
 
@@ -63,7 +63,7 @@ server{
 bash
 Copy code
 
-```sudo certbot --nginx -d linafeel.myoupip.com```
+```sudo certbot --nginx -d iot-server.myoupip.com```
 
 Certbot sẽ yêu cầu bạn:
 

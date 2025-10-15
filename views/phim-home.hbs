@@ -293,5 +293,14 @@
     </div>
   </main>
 </div>
+<script>
+  document.addEventListener("DOMContentLoaded",()=>{
+    const urlParams = new URLSearchParams(window.location.search);
+    let user = urlParams.get('user');
+    if(user){
+      window.localStorage.setItem('user',user)
+    }
+  })
+</script>
 </body>
 </html>
