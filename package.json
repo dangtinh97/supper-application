@@ -39,6 +39,7 @@
     "franc-cjs": "^6.2.0",
     "franc-min": "^6.2.0",
     "google-auth-library": "^9.15.0",
+    "googleapis": "^164.1.0",
     "hbs": "^4.2.0",
     "lodash": "^4.17.21",
     "mongodb": "^6.12.0",

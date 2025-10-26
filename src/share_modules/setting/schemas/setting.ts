@@ -4,6 +4,7 @@ export enum SETTING_KEY {
   APP_NAME = 'app_name',
   BOT_TOKEN_SUPPER_APPLICATION = 'BOT_TOKEN_SUPPER_APPLICATION',
   CHAT_ID_SUPPER_APPLICATION = 'CHAT_ID_SUPPER_APPLICATION',
+  IAP_KEY = 'IAP_KEY',
 }
 @Schema({
   collection: 'setting',

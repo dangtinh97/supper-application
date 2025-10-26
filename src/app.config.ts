@@ -9,4 +9,7 @@ export class AppConfig {
 
   @IsString()
   readonly BASE_URL: string;
+
+  @IsString()
+  readonly GOOGLE_SERVICE_ACCOUNT: string;
 }

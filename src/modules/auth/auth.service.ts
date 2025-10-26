@@ -64,7 +64,9 @@ export class AuthService {
       email: update.email || '',
       name: update.full_name || '',
       token: accessToken,
-      vip_expire: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+      vip_expire: dayjs(update.vip_expired ?? new Date()).format(
+        'YYYY-MM-DD HH:mm:ss',
+      ),
       load_ad: loadAd,
     };
   }

@@ -34,6 +34,9 @@ export class DrumtifyUser extends BaseModel {
 
   @Prop()
   language: string;
+
+  @Prop()
+  vip_expired: Date;
 }
 
 export const DrumtifyUserSchema = SchemaFactory.createForClass(DrumtifyUser);
