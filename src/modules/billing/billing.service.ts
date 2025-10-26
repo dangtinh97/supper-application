@@ -10,6 +10,7 @@ import { SettingService } from '../../share_modules/setting/setting.service';
 import { SETTING_KEY } from '../../share_modules/setting/schemas/setting';
 import * as dayjs from 'dayjs';
 import { UserService } from '../user/user.service';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class BillingService {
@@ -47,8 +48,10 @@ export class BillingService {
         });
       }
       await this.historyBillingModel.create({
+        user_oid: new ObjectId(userOid),
         order_id: res.data.orderId,
         data: res.data,
+        purchase_token: purchase_token,
       });
       if (res.data.acknowledgementState === 1) {
         let date = new Date();

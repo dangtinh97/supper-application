@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { SchemaTypes } from 'mongoose';
+import mongoose, { SchemaTypes } from 'mongoose';
 @Schema({
   collection: 'history_billing',
 })
@@ -13,6 +13,12 @@ export class HistoryBilling {
 
   @Prop()
   use: boolean;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, unique: true })
+  user_oid: mongoose.Types.ObjectId;
+
+  @Prop()
+  purchase_token: string;
 }
 
 export const HistoryBillingSchema =
