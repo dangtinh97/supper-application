@@ -8,8 +8,15 @@ import {
   SearchKeyword,
   SearchKeywordSchema,
 } from './schemas/search-keyword.schema';
-import { VideoPlaylist, VideoPlaylistSchema } from "../user/schemas/video-playlist.schema";
-import { CounterModule } from "../../share_modules/counter/counter.module";
+import {
+  VideoPlaylist,
+  VideoPlaylistSchema,
+} from '../user/schemas/video-playlist.schema';
+import { CounterModule } from '../../share_modules/counter/counter.module';
+import {
+  FavoriteChannel,
+  FavoriteChannelSchema,
+} from './schemas/channel-favorite.schema';
 
 @Module({
   imports: [
@@ -29,6 +36,10 @@ import { CounterModule } from "../../share_modules/counter/counter.module";
       {
         name: VideoPlaylist.name,
         schema: VideoPlaylistSchema,
+      },
+      {
+        name: FavoriteChannel.name,
+        schema: FavoriteChannelSchema,
       },
     ]),
     CounterModule,

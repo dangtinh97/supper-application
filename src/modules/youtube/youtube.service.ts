@@ -6,6 +6,7 @@ import { RecentlyVideo } from './schemas/recently_video';
 import { ObjectId } from 'mongodb';
 import { SearchKeyword } from './schemas/search-keyword.schema';
 import { CounterService } from '../../share_modules/counter/counter.service';
+import { FavoriteChannel } from './schemas/channel-favorite.schema';
 
 const { franc } = require('franc-cjs');
 
@@ -60,19 +61,49 @@ export class YoutubeService {
     @InjectModel(SearchKeyword.name)
     private readonly searchKeywordModel: Model<SearchKeyword>,
     private readonly counterService: CounterService,
+    @InjectModel(FavoriteChannel.name)
+    private readonly favoriteChannelModel: Model<FavoriteChannel>,
   ) {}
 
   async getVideo(videoId: string) {
-    return await this.youtubeModel.findOne({
+    const findVideo = await this.youtubeModel.findOne({
       video_id: videoId,
     });
+    if (findVideo != null) {
+      return findVideo;
+    }
+    const url = `https://www.youtube.com/watch?v=${videoId}`;
+    const curl = await fetch(url, {
+      method: 'GET',
+    });
+    const body = await curl.text();
+    return {
+      title: this.getTitle(body),
+    };
   }
 
-  async suggest(query: string) {
+  async suggest(query: string, userOid: string) {
     query = this.removeBadWord(query);
 
     if (query === 'TRENDING_FIND') {
-      const findKeys = await this.searchKeywordModel.aggregate([
+      let findKeys = [];
+      this.searchKeywordModel.aggregate([
+        {
+          $match: {
+            user_oid: new ObjectId(userOid),
+          },
+        },
+        {
+          $sort: {
+            count: -1,
+            updated_at: -1,
+          },
+        },
+        {
+          $limit: 20,
+        },
+      ]);
+      findKeys = await this.searchKeywordModel.aggregate([
         {
           $sort: {
             count: -1,
@@ -140,7 +171,7 @@ export class YoutubeService {
     return results;
   }
 
-  async findVideoByKeyWord(keyword: string) {
+  async findVideoByKeyWord(keyword: string, userOid: string) {
     keyword = this.removeBadWord(keyword).trim();
     const body = {
       context: {
@@ -187,6 +218,7 @@ export class YoutubeService {
       .findOneAndUpdate(
         {
           keyword: keyword.toLowerCase(),
+          user_oid: new ObjectId(userOid),
         },
         {
           $inc: {
@@ -215,7 +247,7 @@ export class YoutubeService {
       [],
     );
     const dataInsert = await this.insertFromListData(data);
-    return dataInsert.map((item) => {
+    return dataInsert.map((item: any) => {
       return {
         ...item,
         thumbnail: _.get(item, 'thumbnails.0.url', ''),
@@ -830,43 +862,6 @@ export class YoutubeService {
   private countUpdateData = 0;
 
   async setLanguageTitle() {
-    // const findVies = await this.youtubeModel.find(
-    //   {
-    //     rand: {
-    //       $lt: 1,
-    //     },
-    //   },
-    //   {
-    //     rand: 1,
-    //     is_vie: 1,
-    //   },
-    //   { limit: 10000 },
-    // );
-    // const runMap = findVies.map(async (item) => {
-    //   const counter = await this.counterService.getNextIndex(
-    //     item.is_vie ? 'video_vie' : 'video_not_vie',
-    //   );
-    //   console.log(counter);
-    //   await this.youtubeModel
-    //     .findOneAndUpdate(
-    //       {
-    //         _id: item._id,
-    //       },
-    //       {
-    //         $set: {
-    //           rand: counter,
-    //         },
-    //       },
-    //     )
-    //     .exec();
-    // });
-    // await Promise.all(runMap);
-    // if (findVies.length > 0) {
-    //   return await this.setLanguageTitle();
-    // }
-    // return {
-    //   length: findVies.length,
-    // };
     const finds = await this.youtubeModel.find(
       {
         language_title: {
@@ -915,5 +910,47 @@ export class YoutubeService {
       set.add(Math.floor(Math.random() * total) + 1);
     }
     return Array.from(set);
+  }
+
+  getTitle(html: string) {
+    const match = html.match(/<title[^>]*>([^<]*)<\/title>/i);
+    return match ? match[1].trim() : null;
+  }
+
+  async favoriteChannel(request: any) {
+    const find = await this.favoriteChannelModel.findOne({
+      user_oid: request.user_oid,
+      browser_id: request.browser_id,
+    });
+    if (find != null) {
+      return find;
+    }
+    return await this.favoriteChannelModel.create(request);
+  }
+
+  async getFavoriteChannel(userOid: string) {
+    return await this.favoriteChannelModel
+      .find({
+        user_oid: new ObjectId(userOid),
+      })
+      .exec();
+  }
+
+  async findFavorite(userOid: string, browserId: string) {
+    return await this.favoriteChannelModel
+      .findOne({
+        user_oid: new ObjectId(userOid),
+        browser_id: browserId,
+      })
+      .exec();
+  }
+
+  async deleteFavorite(userOid: string, browserId: string) {
+    return await this.favoriteChannelModel
+      .deleteOne({
+        user_oid: new ObjectId(userOid),
+        browser_id: browserId,
+      })
+      .exec();
   }
 }

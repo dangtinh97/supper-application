@@ -23,7 +23,7 @@ export class PhimController {
     if (category) {
       url = `https://phimapi.com/v1/api/danh-sach/${category}?page=${page}`;
     }
-    if(search && search.trim()!=''){
+    if (search && search.trim() != '') {
       url = `https://phimapi.com/v1/api/tim-kiem?keyword=${search.trim()}`;
     }
 

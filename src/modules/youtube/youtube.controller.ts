@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
   Post,
   Query,
   Req,
@@ -11,6 +13,7 @@ import { YoutubeService } from './youtube.service';
 import { JwtAuthGuard } from '../../guards/auth.guard';
 import { User } from '../../decorators/user.decorator';
 import * as _ from 'lodash';
+import { ObjectId } from 'mongodb';
 
 @Controller('youtube')
 @UseGuards(JwtAuthGuard)
@@ -23,14 +26,13 @@ export class YoutubeController {
   }
 
   @Get('/suggest')
-  async suggest(@Query('q') q: string) {
-    return await this.service.suggest(q);
+  async suggest(@Query('q') q: string, @User() { user_oid }: any) {
+    return await this.service.suggest(q, user_oid);
   }
 
   @Get('/find-video')
   async findVideo(@Query('q') q: string, @User() { user_oid }: any) {
-    console.log(user_oid);
-    return await this.service.findVideoByKeyWord(q);
+    return await this.service.findVideoByKeyWord(q, user_oid);
   }
 
   @Post('/view-log')
@@ -83,10 +85,11 @@ export class YoutubeController {
 
   @Post('/video-suggest-by-id')
   async videoSuggestById(@Body() data: any) {
-    const dataParse = typeof data['data'] === 'string'
+    const dataParse =
+      typeof data['data'] === 'string'
         ? JSON.parse(data['data'])
         : data['data'];
-    if (dataParse.length > 1 && _.get(dataParse,'0.lockupViewModel')) {
+    if (dataParse.length > 1 && _.get(dataParse, '0.lockupViewModel')) {
       return await this.service.suggestVideoByIdV2(dataParse);
     }
     return await this.service.saveAndFilterVideoSuggest(dataParse);
@@ -136,14 +139,38 @@ export class YoutubeController {
   }
 
   @Post('/video-channel')
-  async addVideoChannel(@Body() body: any){
+  async addVideoChannel(@Body() body: any) {
     const list = JSON.parse(body['list']);
     const channel = JSON.parse(body['channel']);
     return await this.service.videoOfChannel(list, channel);
   }
-  
+
   @Get('/set-language-title')
-  async setLanguageTitle(){
+  async setLanguageTitle() {
     return await this.service.setLanguageTitle();
+  }
+
+  @Post('/favorite-channel')
+  async createFavoriteChannel(@Body() body: any, @User() { user_oid }: any) {
+    body['user_oid'] = new ObjectId(user_oid);
+    return await this.service.favoriteChannel(body);
+  }
+
+  @Get('/favorite-channel')
+  async allFavorite(@User() { user_oid }: any) {
+    return await this.service.getFavoriteChannel(user_oid);
+  }
+
+  @Get('/favorite-channel/:id')
+  async findFavorite(@Param('id') id: string, @User() { user_oid }: any) {
+    return await this.service.findFavorite(user_oid, id);
+  }
+
+  @Delete('/favorite-channel')
+  async deleteFavorite(
+    @Query('browser_id') browserId: string,
+    @User() { user_oid }: any,
+  ) {
+    return await this.service.deleteFavorite(user_oid, browserId);
   }
 }
