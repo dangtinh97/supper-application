@@ -86,8 +86,7 @@ export class YoutubeService {
     query = this.removeBadWord(query);
 
     if (query === 'TRENDING_FIND') {
-      let findKeys = [];
-      this.searchKeywordModel.aggregate([
+      let findKeys: any = this.searchKeywordModel.aggregate([
         {
           $match: {
             user_oid: new ObjectId(userOid),
@@ -100,22 +99,25 @@ export class YoutubeService {
           },
         },
         {
-          $limit: 20,
+          $limit: 30,
         },
       ]);
-      findKeys = await this.searchKeywordModel.aggregate([
-        {
-          $sort: {
-            count: -1,
-            updated_at: -1,
+      if (findKeys.length < 20) {
+        const findKeywordOther: any = await this.searchKeywordModel.aggregate([
+          {
+            $sort: {
+              count: -1,
+              updated_at: -1,
+            },
           },
-        },
-        {
-          $limit: 20,
-        },
-      ]);
+          {
+            $limit: 20 - findKeys.length,
+          },
+        ]);
+        findKeys = findKeys.contact(...findKeywordOther);
+      }
 
-      return findKeys.map((item) => {
+      return findKeys.map((item: any) => {
         return item.keyword;
       });
     }
@@ -895,7 +897,6 @@ export class YoutubeService {
     });
     const countUpdate = (await Promise.all(updates)).length;
     this.countUpdateData += countUpdate;
-    console.log(this.countUpdateData);
     if (countUpdate > 0) {
       return await this.setLanguageTitle();
     }
@@ -928,12 +929,48 @@ export class YoutubeService {
     return await this.favoriteChannelModel.create(request);
   }
 
-  async getFavoriteChannel(userOid: string) {
-    return await this.favoriteChannelModel
+  async getFavoriteChannel(userOid: string, language: string) {
+    const favorites: any = await this.favoriteChannelModel
       .find({
         user_oid: new ObjectId(userOid),
       })
+      .sort({
+        _id: -1,
+      })
       .exec();
+    if (favorites.length < 20) {
+      const isVie = ['vi', 'vn'].indexOf(language.toLowerCase()) !== -1;
+      const findCounter = await this.counterService.getValueByKey(
+        isVie ? 'video_vie' : 'video_not_vie',
+      );
+      const rands = this.getRandomUnique(findCounter, 100);
+      const channels: any = await this.youtubeModel.aggregate([
+        {
+          $match: {
+            is_vie: isVie,
+            rand: { $in: rands },
+            'channel.browser_id': { $exists: true, $ne: null },
+          },
+        },
+        {
+          $group: {
+            _id: '$channel.channel_id',
+            channel: { $first: '$channel' },
+            video_id: { $first: '$video_id' },
+            title: { $first: '$title' },
+            thumbnails: { $first: '$thumbnails' },
+            duration: { $first: '$duration' },
+            view_of_ytb: { $first: '$view_of_ytb' },
+          },
+        },
+        { $limit: 20 - favorites.length },
+      ]);
+      channels.forEach((video: any) => {
+        favorites.push(video.channel);
+      });
+    }
+
+    return favorites;
   }
 
   async findFavorite(userOid: string, browserId: string) {

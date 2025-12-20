@@ -157,8 +157,11 @@ export class YoutubeController {
   }
 
   @Get('/favorite-channel')
-  async allFavorite(@User() { user_oid }: any) {
-    return await this.service.getFavoriteChannel(user_oid);
+  async allFavorite(@User() { user_oid }: any, @Req() req: Request) {
+    return await this.service.getFavoriteChannel(
+      user_oid,
+      req.headers['lang'] ?? 'vi'
+    );
   }
 
   @Get('/favorite-channel/:id')
