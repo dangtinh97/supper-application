@@ -86,7 +86,7 @@ export class YoutubeService {
     query = this.removeBadWord(query);
 
     if (query === 'TRENDING_FIND') {
-      let findKeys: any = this.searchKeywordModel.aggregate([
+      let findKeys: any =await this.searchKeywordModel.aggregate([
         {
           $match: {
             user_oid: new ObjectId(userOid),
