@@ -86,7 +86,7 @@ export class YoutubeService {
     query = this.removeBadWord(query);
 
     if (query === 'TRENDING_FIND') {
-      let findKeys: any =await this.searchKeywordModel.aggregate([
+      let findKeys: any = await this.searchKeywordModel.aggregate([
         {
           $match: {
             user_oid: new ObjectId(userOid),
@@ -114,12 +114,16 @@ export class YoutubeService {
             $limit: 20 - findKeys.length,
           },
         ]);
-        findKeys = findKeys.contact(...findKeywordOther);
+        findKeys = findKeys.concat(...findKeywordOther);
       }
 
-      return findKeys.map((item: any) => {
-        return item.keyword;
-      });
+      return findKeys
+        .filter((item) => {
+          return item.keyword != '' && item.keyword != null;
+        })
+        .map((item: any) => {
+          return item.keyword;
+        });
     }
 
     const time = Math.round(new Date().getTime() / 1000);
