@@ -266,9 +266,13 @@ export class YoutubeService {
       const timeText = _.get(item, 'videoRenderer.lengthText.simpleText', '');
       let view = _.get(item, 'videoRenderer.viewCountText.simpleText', ',', '');
       view = !/\d/.test(view) ? 0 : parseInt(view);
+      const videoId = _.get(item, 'videoRenderer.videoId');
+      if (!videoId || videoId.indexOf('RD') === 0) {
+        return {};
+      }
       return {
-        video_id: _.get(item, 'videoRenderer.videoId'),
-        thumbnails: _.get(item, 'videoRenderer.thumbnail.thumbnails', []),
+        video_id: videoId,
+        thumbnails: [],
         title: _.get(item, 'videoRenderer.title.runs[0].text', ''),
         duration: this.convertToSeconds(timeText ?? '00:00'),
         view_of_ytb: view,
@@ -510,15 +514,18 @@ export class YoutubeService {
         '',
       );
       const videoId = _.get(item, 'compactVideoRenderer.videoId');
-      if (!videoId) {
+      if (!videoId || videoId.indexOf('RD') === 0) {
         return {};
       }
       view = !/\d/.test(view) ? 0 : parseInt(view);
       try {
+        const videoId = _.get(item, 'compactVideoRenderer.videoId') || '';
+        if (!videoId || videoId.indexOf('RD') === 0) {
+          return {};
+        }
         return {
-          video_id: _.get(item, 'compactVideoRenderer.videoId') || '',
-          thumbnails:
-            _.get(item, 'compactVideoRenderer.thumbnail.thumbnails', []) || [],
+          video_id: videoId,
+          thumbnails: [],
           title: _.get(item, 'compactVideoRenderer.title.simpleText', '') || '',
           duration: this.convertToSeconds(timeText ?? '00:00') || 0,
           view_of_ytb: view || 0,
@@ -683,6 +690,9 @@ export class YoutubeService {
       .map((dataItem: any) => {
         const item = _.get(dataItem, 'playlistVideoRenderer');
         const videoId = _.get(item, 'videoId');
+        if (!videoId || videoId.indexOf('RD') === 0) {
+          return {};
+        }
         const title = _.get(item, 'title.runs.0.text');
         const timeText = _.get(item, 'lengthSeconds', '0');
         const time = parseInt(timeText);
@@ -738,6 +748,9 @@ export class YoutubeService {
       .map((dataItem: any) => {
         const item = _.get(dataItem, 'richItemRenderer.content.videoRenderer');
         const videoId = _.get(item, 'videoId');
+        if (!videoId || videoId.indexOf('RD') === 0) {
+          return {};
+        }
         const title = _.get(item, 'title.runs.0.text');
         const timeText = _.get(item, 'lengthText.simpleText', '0');
         const time = this.convertToSeconds(timeText);
@@ -798,20 +811,14 @@ export class YoutubeService {
         '',
       );
       const videoId = _.get(item, 'contentId');
-      if (!videoId) {
+      if (!videoId || videoId.indexOf('RD') === 0) {
         return {};
       }
       view = !/\d/.test(view) ? 0 : parseInt(view);
       try {
         return {
           video_id: videoId,
-          thumbnails: [
-            {
-              url: `https://img.youtube.com/vi/${videoId}/sddefault.jpg`,
-              width: 336,
-              height: 188,
-            },
-          ],
+          thumbnails: [],
           title: _.get(
             item,
             'metadata.lockupMetadataViewModel.title.content',
