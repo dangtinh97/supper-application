@@ -37,4 +37,7 @@ $ pnpm run test:cov
 ## Support
 - ```ssh -i /Users/dangtinhvu/Documents/code2024/certs/ssh/id_rsa ubuntu@54.151.162.201```
 - ```ssh -i /Users/dangtinhvu/Documents/Code2024/certs/ssh/id_rsa ubuntu@54.151.162.201```
-- ```ssh -i /Users/dangtinhvu/Documents/certs/vinalife-ssh/id_rsa ubuntu@54.151.162.201```
+
+```plantext
+ssh -i /Users/dangtinhvu/Documents/certs/vinalife-ssh/id_rsa ubuntu@54.151.162.201
+```

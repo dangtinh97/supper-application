@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from "@nestjs/common";
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -15,17 +15,18 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt-strategy/jwt-strategy.service';
 import { ProfileModule } from './modules/profile/profile.module';
 import { NotificationModule } from './modules/notification/notification.module';
-import { ChatModule } from "./modules/chat/chat.module";
-import { SettingModule } from "./share_modules/setting/setting.module";
-import { HeaderMiddleware } from "./middlewares/header.middleware";
-import { GatewayModule } from "./modules/gateway/gateway.module";
-import { UserModule } from "./modules/user/user.module";
-import { StreamModule } from "./modules/stream/stream.module";
-import { ShareVideoModule } from "./modules/share-video/share-video.module";
-import { PhimModule } from "./modules/phim/phim.module";
+import { ChatModule } from './modules/chat/chat.module';
+import { SettingModule } from './share_modules/setting/setting.module';
+import { HeaderMiddleware } from './middlewares/header.middleware';
+import { GatewayModule } from './modules/gateway/gateway.module';
+import { UserModule } from './modules/user/user.module';
+import { StreamModule } from './modules/stream/stream.module';
+import { ShareVideoModule } from './modules/share-video/share-video.module';
+import { PhimModule } from './modules/phim/phim.module';
 import { ShopeeModule } from './modules/shopee/shopee.module';
 import { AdModule } from './modules/ad/ad.module';
 import { BillingModule } from './modules/billing/billing.module';
+import { AdminModule } from './modules/admin/admin.module';
 
 @Module({
   imports: [
@@ -76,6 +77,7 @@ import { BillingModule } from './modules/billing/billing.module';
     ShopeeModule,
     AdModule,
     BillingModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService, TaskService, JwtService, ConfigService, JwtStrategy],

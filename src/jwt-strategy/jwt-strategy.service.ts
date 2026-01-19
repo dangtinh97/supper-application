@@ -6,7 +6,13 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        // 1. API / Mobile / SPA
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+
+        // 2. Admin SSR (cookie)
+        (req: any) => req?.cookies?.jwt,
+      ]),
       ignoreExpiration: false,
       secretOrKey: process.env.JWT_SECRET || 'default-secret', // Use environment variable for production
     });

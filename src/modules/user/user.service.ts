@@ -139,4 +139,29 @@ export class UserService {
       )
       .exec();
   }
+
+  async analysis() {
+    const [result] = await this.userModel.aggregate([
+      {
+        $facet: {
+          totalUsers: [{ $count: 'count' }],
+          todayUsers: [
+            {
+              $match: {
+                created_at: {
+                  $gte: new Date(new Date().setHours(0, 0, 0, 0)),
+                  $lt: new Date(new Date().setHours(23, 59, 59, 999)),
+                },
+              },
+            },
+            { $count: 'count' },
+          ],
+        },
+      },
+    ]);
+
+    const total = result.totalUsers[0]?.count ?? 0;
+    const today = result.todayUsers[0]?.count ?? 0;
+    return { total, today };
+  }
 }

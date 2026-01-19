@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="/admin.css">
+
+</head>
+<body>
+
+<div class="dashboard">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2>ADMIN</h2>
+    <nav class="menu">
+      <a href="#" class="active">Dashboard</a>
+      <a href="#">Users</a>
+      <a href="#">Services</a>
+      <a href="#">Logs</a>
+      <a href="/admin/setting">Settings</a>
+      <a href="/admin/logout">Logout</a>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="topbar">
+      <div class="menu-toggle" id="menuToggle">☰</div>
+      <h1>Dashboard</h1>
+      <div class="user">Welcome, Admin</div>
+    </div>
+
+    <!-- Thêm overlay để đóng khi click ra ngoài (mobile) -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Stats -->
+    <section class="cards">
+      <div class="card">
+        <h3>Total Users</h3>
+        <p>{{data.total}}</p>
+      </div>
+      <div class="card">
+        <h3>Active Today</h3>
+        <p>{{data.today}}</p>
+      </div>
+      <div class="card">
+        <h3>Errors Today</h3>
+        <p>3</p>
+      </div>
+      <div class="card">
+        <h3>Server Load</h3>
+        <p>42%</p>
+      </div>
+    </section>
+
+    <!-- Table -->
+    <section class="table-container">
+      <h3 style="margin-bottom:15px;">Recent Activity</h3>
+      <table>
+        <thead>
+        <tr>
+          <th>Time</th>
+          <th>User</th>
+          <th>Action</th>
+          <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>10:42</td>
+          <td>admin</td>
+          <td>Login</td>
+          <td>Success</td>
+        </tr>
+        <tr>
+          <td>10:30</td>
+          <td>user123</td>
+          <td>API Request</td>
+          <td>200 OK</td>
+        </tr>
+        <tr>
+          <td>10:12</td>
+          <td>system</td>
+          <td>Backup</td>
+          <td>Completed</td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="/sidebar.js"></script>
+</body>
+</html>

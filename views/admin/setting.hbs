@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="/admin.css">
+  <link rel="stylesheet" href="/setting.css">
+
+</head>
+<body>
+
+<div class="dashboard">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2>ADMIN</h2>
+    <nav class="menu">
+      <a href="#" class="active">Dashboard</a>
+      <a href="#">Users</a>
+      <a href="#">Services</a>
+      <a href="#">Logs</a>
+      <a href="/admin/setting">Settings</a>
+      <a href="/admin/logout">Logout</a>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="topbar">
+      <div class="menu-toggle" id="menuToggle">☰</div>
+      <h1>Dashboard</h1>
+      <div class="user">Welcome, Admin</div>
+    </div>
+
+    <!-- Thêm overlay để đóng khi click ra ngoài (mobile) -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Stats -->
+    <section class="cards">
+      <div class="card app-version-card">
+        <div class="card-header">
+          <div>
+            <h3>App Version Manager</h3>
+
+          </div>
+          <span class="version-badge">LIVE</span>
+        </div>
+        <div class="card-body">
+          <span class="version-type">Mode: {{ data.APP_VERSION.data.type }}</span>
+          <div></div>
+          <span class="version-type">
+            Version: {{ data.APP_VERSION.data.version }}
+          </span>
+        </div>
+
+        <div class="card-footer">
+          <button type="button"
+                  class="btn-setting-version secondary"
+                  data-type="NO_ACTION">
+            No Action
+          </button>
+          <button type="button"
+                  class="btn-setting-version primary"
+                  data-type="UPDATE">
+            Update
+          </button>
+        </div>
+      </div>
+
+    </section>
+  </main>
+</div>
+<script src="/sidebar.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script>
+  document.addEventListener("DOMContentLoaded",()=>{
+    $('.btn-setting-version').on('click',(e)=>{
+      const type = $(e.currentTarget).data('type');
+      $.ajax({
+        url:'/admin/setting',
+        type:'POST',
+        dataType:"JSON",
+        xhrFields: {
+          withCredentials: true
+        },
+        contentType: 'application/json',
+        data:JSON.stringify({
+          type:"UPDATE_VERSION",
+          data:{
+            id: '{{data.APP_VERSION._id}}',
+            type: type,
+          }
+        }),
+        success:(res)=>{
+          console.log(res)
+          window.location.reload()
+        }
+      })
+    })
+  })
+</script>
+</body>
+</html>
