@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import { Schema } from 'mongoose';
 
 export function tsMongoPlugin(schema: Schema){
   schema.add({
