@@ -5,7 +5,9 @@ WORKDIR /app
 
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
-RUN npm install -g pnpm
+RUN #npm install -g pnpm
+# enable corepack (pnpm)
+RUN corepack enable
 
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
