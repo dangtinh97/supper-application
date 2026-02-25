@@ -16,11 +16,11 @@
   <aside class="sidebar">
     <h2>ADMIN</h2>
     <nav class="menu">
-      <a href="#" class="active">Dashboard</a>
+      <a href="/admin/dashboard">Dashboard</a>
       <a href="#">Users</a>
       <a href="#">Services</a>
       <a href="#">Logs</a>
-      <a href="/admin/setting">Settings</a>
+      <a href="/admin/setting" class="active">Settings</a>
       <a href="/admin/logout">Logout</a>
     </nav>
   </aside>
@@ -41,7 +41,7 @@
       <div class="card app-version-card">
         <div class="card-header">
           <div>
-            <h3>App Version Manager</h3>
+            <h3>YouPiP</h3>
 
           </div>
           <span class="version-badge">LIVE</span>
@@ -57,11 +57,48 @@
         <div class="card-footer">
           <button type="button"
                   class="btn-setting-version secondary"
+                  data-record_oid="{{ data.APP_VERSION._id }}"
                   data-type="NO_ACTION">
             No Action
           </button>
           <button type="button"
                   class="btn-setting-version primary"
+                  data-record_oid="{{ data.APP_VERSION._id }}"
+                  data-type="UPDATE">
+            Update
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="cards">
+      <div class="card app-version-card">
+        <div class="card-header">
+          <div>
+            <h3>YouPiP Music</h3>
+
+          </div>
+          <span class="version-badge">LIVE</span>
+        </div>
+        <div class="card-body">
+          <span class="version-type">Mode: {{ data.APP_MUSIC_VERSION.data.type }}</span>
+          <div></div>
+          <span class="version-type">
+            Version: {{ data.APP_MUSIC_VERSION.data.version }}
+          </span>
+        </div>
+
+        <div class="card-footer">
+          <button type="button"
+                  class="btn-setting-version secondary"
+                  data-record_oid="{{ data.APP_MUSIC_VERSION._id }}"
+                  data-type="NO_ACTION">
+            No Action
+          </button>
+          <button type="button"
+                  class="btn-setting-version primary"
+                  data-record_oid="{{ data.APP_MUSIC_VERSION._id }}"
                   data-type="UPDATE">
             Update
           </button>
@@ -77,6 +114,7 @@
   document.addEventListener("DOMContentLoaded",()=>{
     $('.btn-setting-version').on('click',(e)=>{
       const type = $(e.currentTarget).data('type');
+      const recordId = $(e.currentTarget).data('record_oid');
       $.ajax({
         url:'/admin/setting',
         type:'POST',
@@ -88,7 +126,7 @@
         data:JSON.stringify({
           type:"UPDATE_VERSION",
           data:{
-            id: '{{data.APP_VERSION._id}}',
+            id: recordId,
             type: type,
           }
         }),

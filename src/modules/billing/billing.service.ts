@@ -6,7 +6,7 @@ import { HistoryBilling } from './schemas/history-billing.schema';
 import { Model } from 'mongoose';
 import { SettingService } from '../../share_modules/setting/setting.service';
 import { SETTING_KEY } from '../../share_modules/setting/schemas/setting';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import { UserService } from '../user/user.service';
 import { ObjectId } from 'mongodb';
 

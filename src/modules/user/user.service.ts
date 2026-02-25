@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
 import { VideoPlaylist } from './schemas/video-playlist.schema';
 import { YoutubeService } from '../youtube/youtube.service';
+import dayjs from '../../plugins/dayjs';
 
 @Injectable()
 export class UserService {
@@ -141,6 +142,9 @@ export class UserService {
   }
 
   async analysis() {
+
+    const start = dayjs().tz('Asia/Ho_Chi_Minh').startOf('day').utc().toDate();
+
     const [result] = await this.userModel.aggregate([
       {
         $facet: {
@@ -149,8 +153,7 @@ export class UserService {
             {
               $match: {
                 created_at: {
-                  $gte: new Date(new Date().setHours(0, 0, 0, 0)),
-                  $lt: new Date(new Date().setHours(23, 59, 59, 999)),
+                  $gte: start,
                 },
               },
             },

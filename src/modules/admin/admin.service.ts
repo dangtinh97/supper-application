@@ -39,7 +39,6 @@ export class AdminService {
 
   async dashboard() {
     const totalUser = await this.userService.analysis();
-    console.log(totalUser);
     return {
       ...totalUser,
     };
@@ -49,9 +48,14 @@ export class AdminService {
     const findVersion = await this.settingService.findByKey(
       'app_version_org.youpip.app',
     );
-    console.log(findVersion);
+
+    const findMusicVersion = await this.settingService.findByKey(
+      'app_version_com.myoupip.appoffline',
+    );
+
     return {
       APP_VERSION: findVersion,
+      APP_MUSIC_VERSION: findMusicVersion,
     };
   }
 

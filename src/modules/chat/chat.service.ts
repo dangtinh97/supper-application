@@ -4,8 +4,8 @@ import { Chat, StatusChat } from './schemas/chat.schema';
 import { Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
 import { Message } from './schemas/message.schema';
-import * as dayjs from 'dayjs';
 import { SocketClientService } from '../gateway/socket-client.service';
+import dayjs from '../../plugins/dayjs';
 
 @Injectable()
 export class ChatService {

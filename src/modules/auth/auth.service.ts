@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { DrumtifyUser } from './schemas/drumtify-user';
 import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import { SettingService } from '../../share_modules/setting/setting.service';
 
 @Injectable()
