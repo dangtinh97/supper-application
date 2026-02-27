@@ -176,4 +176,9 @@ export class YoutubeController {
   ) {
     return await this.service.deleteFavorite(user_oid, browserId);
   }
+
+  @Get("/remove-video-trash")
+  async removeVideoTrash(){
+    return await this.service.removeVideoTrash();
+  }
 }

@@ -7,6 +7,7 @@ import { ObjectId } from 'mongodb';
 import { SearchKeyword } from './schemas/search-keyword.schema';
 import { CounterService } from '../../share_modules/counter/counter.service';
 import { FavoriteChannel } from './schemas/channel-favorite.schema';
+import dayjs from 'dayjs';
 
 const { franc } = require('franc-cjs');
 
@@ -1000,5 +1001,76 @@ export class YoutubeService {
         browser_id: browserId,
       })
       .exec();
+  }
+
+  async removeVideoTrash(countError = 0) {
+    const timeBeforeMonth = Math.round(
+      dayjs().subtract(1, 'month').toDate().getTime() / 1000,
+    );
+
+    const list = await this.youtubeModel.aggregate([
+      {
+        $match: {
+          view_of_app: {
+            $lt: timeBeforeMonth,
+          },
+        },
+      },
+      {
+        $limit: 100,
+      },
+      {
+        $project: {
+          video_id: 1,
+        },
+      },
+    ]);
+    if (list.length === 0)
+      return {
+        count: 0,
+      };
+    console.log(
+      `Find ${list.length} video in last month: ${dayjs().format(
+        'YYYY-MM-DD HH:mm:ss',
+      )}`,
+    );
+    for (const item of list) {
+      const videoId = item.video_id;
+      const url = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+      const curl = await fetch(url, {
+        method: 'GET',
+      });
+
+      if (curl.status === 404) {
+        await this.youtubeModel
+          .deleteOne({
+            video_id: videoId,
+          })
+          .exec();
+        await this.recentlyVideoModel
+          .deleteOne({
+            video_id: videoId,
+          })
+          .exec();
+        countError++;
+        console.log(`Delete: ${videoId}`);
+        continue;
+      }
+      await this.youtubeModel
+        .updateOne(
+          {
+            video_id: videoId,
+          },
+          {
+            $set: {
+              view_of_app: Math.floor(new Date().getTime() / 1000),
+            },
+          },
+        )
+        .exec();
+    }
+    return {
+      total: countError
+    }
   }
 }
