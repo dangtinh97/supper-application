@@ -15,7 +15,7 @@ export class AuthService {
     private settingService: SettingService,
   ) {}
 
-  async login(uidDevice: string, appVersion: string, lang: string = 'vi', appId: string) {
+  async login(uidDevice: string, appVersion: string, lang: string = 'vi', appId: string):Promise<any> {
     const update = await this.drumtifyUserModel.findOneAndUpdate(
       {
         uid_device: uidDevice,
