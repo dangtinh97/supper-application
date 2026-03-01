@@ -17,6 +17,10 @@ import {
   FavoriteChannel,
   FavoriteChannelSchema,
 } from './schemas/channel-favorite.schema';
+import { TrendingService } from './trending.service';
+import { VideoActionService } from './video-action.service';
+import { FavoriteVideo, FavoriteVideoSchema } from './schemas/favorite-video.schema';
+import { WatchLaterVideo, WatchLaterVideoSchema } from './schemas/watch-later-video.schema';
 
 @Module({
   imports: [
@@ -41,11 +45,19 @@ import {
         name: FavoriteChannel.name,
         schema: FavoriteChannelSchema,
       },
+      {
+        name: FavoriteVideo.name,
+        schema: FavoriteVideoSchema,
+      },
+      {
+        name: WatchLaterVideo.name,
+        schema: WatchLaterVideoSchema,
+      }
     ]),
     CounterModule,
   ],
   controllers: [YoutubeController],
-  providers: [YoutubeService],
+  providers: [YoutubeService, TrendingService, VideoActionService],
   exports: [YoutubeService],
 })
 export class YoutubeModule {}

@@ -14,11 +14,17 @@ import { JwtAuthGuard } from '../../guards/auth.guard';
 import { User } from '../../decorators/user.decorator';
 import * as _ from 'lodash';
 import { ObjectId } from 'mongodb';
+import { TrendingService } from './trending.service';
+import { VideoActionService } from './video-action.service';
 
 @Controller('youtube')
 @UseGuards(JwtAuthGuard)
 export class YoutubeController {
-  constructor(private service: YoutubeService) {}
+  constructor(
+    private service: YoutubeService,
+    private trendingService: TrendingService,
+    private actionService: VideoActionService,
+  ) {}
 
   @Get('/url')
   async getYoutubeUrl(@Query('v') v: string) {
@@ -160,7 +166,7 @@ export class YoutubeController {
   async allFavorite(@User() { user_oid }: any, @Req() req: Request) {
     return await this.service.getFavoriteChannel(
       user_oid,
-      req.headers['lang'] ?? 'vi'
+      req.headers['lang'] ?? 'vi',
     );
   }
 
@@ -177,8 +183,42 @@ export class YoutubeController {
     return await this.service.deleteFavorite(user_oid, browserId);
   }
 
-  @Get("/remove-video-trash")
-  async removeVideoTrash(){
+  @Get('/remove-video-trash')
+  async removeVideoTrash() {
     return await this.service.removeVideoTrash();
+  }
+
+  @Get('/crawl-trending')
+  async crawlTrending() {
+    return await this.trendingService.crawlTrending('vn');
+  }
+
+  /*Action*/
+  @Post('/favorite')
+  async actionFavorite(@Body() body: any, @User() { user_oid }: any) {
+    return await this.actionService.actionFavorite(
+      user_oid,
+      body.video_id,
+      body.action,
+    );
+  }
+
+  @Post('/watch-later')
+  async actionWatchLater(@Body() body: any, @User() { user_oid }: any) {
+    return await this.actionService.actionWatchLater(
+      user_oid,
+      body.video_id,
+      body.action,
+    );
+  }
+
+  @Get('/favorites')
+  async listFavorite(@User() { user_oid }: any){
+    return await this.actionService.listFavorite(user_oid);
+  }
+
+  @Get('/watch-later')
+  async listWatchLater(@User() { user_oid }: any){
+    return await this.actionService.listWatchLater(user_oid);
   }
 }

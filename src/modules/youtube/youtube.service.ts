@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Youtube } from './schemas/youtube.schema';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { RecentlyVideo } from './schemas/recently_video';
 import { ObjectId } from 'mongodb';
 import { SearchKeyword } from './schemas/search-keyword.schema';
@@ -620,17 +620,25 @@ export class YoutubeService {
   }
 
   async findVideoByIds(ids: string[]) {
-    const list = await this.youtubeModel.find({
-      video_id: {
-        $in: ids,
-      },
-    });
+    const list = await this.youtubeModel
+      .find({
+        video_id: { $in: ids },
+      })
+      .lean(); // cực quan trọng
 
-    return list.map((item) => {
-      const itemSet: any = item;
-      itemSet.thumbnail = `https://img.youtube.com/vi/${item.video_id}/sddefault.jpg`;
-      return itemSet;
-    });
+    const map = new Map(list.map((item) => [item.video_id, item]));
+
+    return ids
+      .map((id: string) => {
+        const item = map.get(id);
+        if (!item) return null;
+
+        return {
+          ...item,
+          thumbnail: `https://img.youtube.com/vi/${id}/sddefault.jpg`,
+        };
+      })
+      .filter(Boolean);
   }
 
   async addVideoInfo(data: any) {
@@ -1007,13 +1015,10 @@ export class YoutubeService {
     const timeBeforeMonth = Math.round(
       dayjs().subtract(1, 'month').toDate().getTime() / 1000,
     );
-
     const list = await this.youtubeModel.aggregate([
       {
         $match: {
-          view_of_app: {
-            $lt: timeBeforeMonth,
-          },
+          time_check: null,
         },
       },
       {
@@ -1036,6 +1041,7 @@ export class YoutubeService {
     );
     for (const item of list) {
       const videoId = item.video_id;
+      console.log(`Run id=${videoId}`);
       const url = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
       const curl = await fetch(url, {
         method: 'GET',
@@ -1063,14 +1069,26 @@ export class YoutubeService {
           },
           {
             $set: {
-              view_of_app: Math.floor(new Date().getTime() / 1000),
+              time_check: new Date(),
             },
           },
         )
         .exec();
     }
     return {
-      total: countError
-    }
+      total: countError,
+    };
+  }
+
+  listVideoFactory(list: any[]) {
+    return list.map((item) => {
+      delete item.created_at;
+      delete item.updated_at;
+      return {
+        ...item,
+        thumbnails: [],
+        thumbnail: `https://img.youtube.com/vi/${item.video_id}/sddefault.jpg`,
+      };
+    });
   }
 }

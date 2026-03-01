@@ -35,6 +35,9 @@ export class Youtube extends BaseModel {
   is_vie: boolean;
   @Prop()
   rand: number;
+
+  @Prop()
+  time_check: Date;
 }
 
 export const YoutubeSchema = SchemaFactory.createForClass(Youtube);
