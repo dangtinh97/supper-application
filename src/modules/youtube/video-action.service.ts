@@ -74,7 +74,7 @@ export class VideoActionService {
       .exec();
   }
 
-  async listFavorite(userOid: string) {
+  async listFavorite(userOid: string): Promise<any> {
     const list = await this.favoriteModel
       .find({
         user_oid: new ObjectId(userOid),
@@ -89,7 +89,7 @@ export class VideoActionService {
     return await this.youtubeService.findVideoByIds(ids);
   }
 
-  async listWatchLater(userOid: string) {
+  async listWatchLater(userOid: string): Promise<any> {
     const list = await this.watchLaterModel
       .find({
         user_oid: new ObjectId(userOid),

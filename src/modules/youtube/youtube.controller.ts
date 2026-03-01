@@ -213,12 +213,12 @@ export class YoutubeController {
   }
 
   @Get('/favorites')
-  async listFavorite(@User() { user_oid }: any){
+  async listFavorite(@User() { user_oid }: any) {
     return await this.actionService.listFavorite(user_oid);
   }
 
   @Get('/watch-later')
-  async listWatchLater(@User() { user_oid }: any){
+  async listWatchLater(@User() { user_oid }: any) {
     return await this.actionService.listWatchLater(user_oid);
   }
 }

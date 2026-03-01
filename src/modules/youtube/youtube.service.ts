@@ -1,56 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Youtube } from './schemas/youtube.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { RecentlyVideo } from './schemas/recently_video';
 import { ObjectId } from 'mongodb';
 import { SearchKeyword } from './schemas/search-keyword.schema';
 import { CounterService } from '../../share_modules/counter/counter.service';
 import { FavoriteChannel } from './schemas/channel-favorite.schema';
 import dayjs from 'dayjs';
+import { badWords, removeBadWord } from './common';
 
 const { franc } = require('franc-cjs');
 
 const _ = require('lodash');
-
-export const badWords = [
-  'damn',
-  'hell',
-  'shit',
-  'fuck',
-  'bitch',
-  'bastard',
-  'asshole',
-  'dick',
-  'piss',
-  'crap',
-  'slut',
-  'prick',
-  'cunt',
-  'motherfucker',
-  'screw',
-  'whore',
-  'cock',
-  'douche',
-  'sex',
-  'địt',
-  'cặc',
-  'lồn',
-  'đéo',
-  'mẹ mày',
-  'chó',
-  'đụ',
-  'mẹ kiếp',
-  'bà nội mày',
-  'mả mẹ',
-  'đéo hiểu',
-  'bố láo',
-  'con mẹ nó',
-  'khốn nạn',
-  'ngu',
-  'thằng khốn',
-  'mày',
-];
 
 @Injectable()
 export class YoutubeService {
@@ -84,7 +46,7 @@ export class YoutubeService {
   }
 
   async suggest(query: string, userOid: string) {
-    query = this.removeBadWord(query);
+    query = removeBadWord(query);
 
     if (query === 'TRENDING_FIND') {
       let findKeys: any = await this.searchKeywordModel.aggregate([
@@ -138,22 +100,7 @@ export class YoutubeService {
     return this.parseDataSuggest(body);
   }
 
-  removeBadWord(text: string) {
-    if (!text) {
-      return '';
-    }
-    try {
-      badWords.sort((a, b) => b.length - a.length);
-      badWords.forEach((item) => {
-        const regex = new RegExp(`(^|\\s)${item}($|\\s)`, 'gi');
-        text = text.replace(regex, ' ');
-      });
-      text = text.replace(/ {2}/g, ' ');
-      return text.trim();
-    } catch (e) {
-      return text;
-    }
-  }
+
 
   headerCurl(): any {
     return {
@@ -179,7 +126,7 @@ export class YoutubeService {
   }
 
   async findVideoByKeyWord(keyword: string, userOid: string) {
-    keyword = this.removeBadWord(keyword).trim();
+    keyword = removeBadWord(keyword).trim();
     const body = {
       context: {
         client: {
@@ -619,7 +566,7 @@ export class YoutubeService {
     });
   }
 
-  async findVideoByIds(ids: string[]) {
+  async findVideoByIds(ids: any[]):Promise<any> {
     const list = await this.youtubeModel
       .find({
         video_id: { $in: ids },
@@ -1012,9 +959,6 @@ export class YoutubeService {
   }
 
   async removeVideoTrash(countError = 0) {
-    const timeBeforeMonth = Math.round(
-      dayjs().subtract(1, 'month').toDate().getTime() / 1000,
-    );
     const list = await this.youtubeModel.aggregate([
       {
         $match: {
@@ -1078,17 +1022,5 @@ export class YoutubeService {
     return {
       total: countError,
     };
-  }
-
-  listVideoFactory(list: any[]) {
-    return list.map((item) => {
-      delete item.created_at;
-      delete item.updated_at;
-      return {
-        ...item,
-        thumbnails: [],
-        thumbnail: `https://img.youtube.com/vi/${item.video_id}/sddefault.jpg`,
-      };
-    });
   }
 }
