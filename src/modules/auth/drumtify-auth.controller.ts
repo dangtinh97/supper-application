@@ -11,8 +11,9 @@ export class DrumtifyAuthController {
   async login(@Req() req: Request) {
     const uidDevice = req.headers['uid-device'];
     const appVersion = req.headers['app-version'];
+    const appId = req.headers['app-name'] ?? '';
     const lang = req.headers['lang'] ?? 'en';
-    const result =  await this.service.login(uidDevice, appVersion, lang);
+    const result = await this.service.login(uidDevice, appVersion, lang, appId);
     return {
       ...result,
       is_review: req.headers['app-review'] === 'true',
